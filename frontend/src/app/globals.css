@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-sidebar: #1e293b;
+  --color-sidebar-text: #e2e8f0;
+  --color-sidebar-hover: #334155;
+  --color-sidebar-active: #4f46e5;
+  --color-accent: #4f46e5;
+  --color-accent-light: #6366f1;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 2px;
+}
+
+/* Pulse animation for running status */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-status-pulse {
+  animation: status-pulse 1.5s ease-in-out infinite;
+}
+
+/* Tab underline transition */
+.tab-active {
+  border-bottom: 2px solid var(--color-accent);
+}
