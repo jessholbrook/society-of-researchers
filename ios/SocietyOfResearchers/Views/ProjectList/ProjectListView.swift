@@ -54,6 +54,9 @@ struct ProjectListView: View {
         .task {
             await viewModel.loadProjects()
         }
+        .onAppear {
+            Task { await viewModel.loadProjects() }
+        }
     }
 }
 
