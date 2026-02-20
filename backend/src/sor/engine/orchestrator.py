@@ -78,8 +78,11 @@ class StageOrchestrator:
         # Build context from prior approved stages
         prior_context = self._build_prior_context(project, stage_number)
 
-        # Build the user message combining research question + context + prior stages
-        user_message = self._build_user_message(project, prior_context)
+        # Fetch uploaded documents text
+        documents_text = await self._db.get_documents_text(project.id)
+
+        # Build the user message combining research question + context + prior stages + documents
+        user_message = self._build_user_message(project, prior_context, documents_text)
 
         # --- Yield AGENT_START for each agent ---
         for agent in enabled_agents:
@@ -276,7 +279,7 @@ class StageOrchestrator:
         return "\n".join(parts)
 
     @staticmethod
-    def _build_user_message(project: Project, prior_context: str) -> str:
+    def _build_user_message(project: Project, prior_context: str, documents_text: str = "") -> str:
         """Assemble the full user message sent to each agent.
 
         Combines the research question, structured context components, and
@@ -309,6 +312,14 @@ class StageOrchestrator:
         if prior_context:
             sections.append("\n# Prior Stage Results")
             sections.append(prior_context)
+
+        if documents_text:
+            sections.append("\n# Uploaded Documents")
+            sections.append(
+                "The researcher has uploaded the following documents as evidence. "
+                "Reference and cite these materials in your analysis where relevant.\n"
+            )
+            sections.append(documents_text)
 
         sections.append(
             "\n# Your Task"

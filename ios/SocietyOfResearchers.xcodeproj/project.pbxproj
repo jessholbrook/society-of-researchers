@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03E4779A084B8F9200AD069D /* SpeechRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 878B10027777C2B321F96C26 /* SpeechRecognizer.swift */; };
 		0A374F38C34CCBDAF820BF9C /* SSEClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB811B2EBEA251EB9084FA4D /* SSEClient.swift */; };
 		1679B87B67F68C4FA0166CA8 /* ProjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444929788D3BCD3CA93C7A2E /* ProjectDetailView.swift */; };
 		20344C6E06F64871C5E49E10 /* AgentCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F4428EF649089F55FCC85 /* AgentCardView.swift */; };
@@ -20,19 +21,21 @@
 		3DD59D982C20ED2E89F0053F /* AgentManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E74BF08A3799115646531B4 /* AgentManagementViewModel.swift */; };
 		499A52408B01AC86CF7E767B /* StageDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160A87D7B9CB770E44AF8CCE /* StageDetailView.swift */; };
 		51237185FCDAB0F3E5A5B435 /* StatusBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E33A9AF71179E642CCD2761E /* StatusBadge.swift */; };
+		5D69C69D3534F29A09AE2B94 /* AgentAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0411E7167237C0BE5F0C827C /* AgentAvatarView.swift */; };
 		6B2628A67F2519CD939ABD8D /* AgentFormView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C572FBC6DFA21503DA10AF0F /* AgentFormView.swift */; };
 		783D6D95EC72803011B8DCE0 /* OverrideTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F6DDD733872C990067622E3 /* OverrideTab.swift */; };
 		7998BDF544B82ED6B9A28D58 /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB9181C2ED8838D2E21CFAF0 /* ProjectListView.swift */; };
 		7AD99605330C771BF672AC3F /* StageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69748219E25D1AB6AF17121C /* StageViewModel.swift */; };
 		7EED55E19B1029869B524BA5 /* Agent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CBDBDDC6F7EAD6ADE00EEDA /* Agent.swift */; };
+		7F818A302A64063C24A9233E /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9F85FE59E3B1CF7968989B /* HomeView.swift */; };
 		8BF9CB23758D119F91A8A2BC /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4E32E5D708529999B92371 /* ReportViewModel.swift */; };
 		95BD5FF7CFAD19DC11C33309 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E283910797579BC6104D37 /* APIClient.swift */; };
+		9B4C8C98B785E88A436434F6 /* DictationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DB8E492112DF407A847387 /* DictationButton.swift */; };
 		A04BBE0BE0ED678BD765C2F2 /* Conflict.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5DD2053259E2278AF14BBA4 /* Conflict.swift */; };
 		AD545767A0537892A94F5C27 /* ProjectRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA8EC033B3B42014802330 /* ProjectRowView.swift */; };
 		BAD1655295FED30EDAF83946 /* AgentOutputsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = C425C79B4DFAC5B8AED2E65E /* AgentOutputsTab.swift */; };
 		BC2D06FCEBC88420F9729D8C /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58DFC17528C4EDE44A399CD /* Configuration.swift */; };
 		BDE474C5CB4B85B525122FA8 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9389C6A7E67F4843CC0B4CEE /* ErrorBanner.swift */; };
-		B2C3D4E5F67890123456A1B2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6789012345678 /* HomeView.swift */; };
 		C8B3EF4C8507F25563BA8DBD /* SocietyOfResearchersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4077FEC6E88FCB8B26D340A /* SocietyOfResearchersApp.swift */; };
 		CD1300C4A2BE59BA670D1805 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51903D5540D2ACA6E1039F04 /* Project.swift */; };
 		D5AF0F3E4C735E1E40FD6EA7 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863B52F632F09B8BB7C918FD /* LoadingView.swift */; };
@@ -42,6 +45,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0411E7167237C0BE5F0C827C /* AgentAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentAvatarView.swift; sourceTree = "<group>"; };
 		160A87D7B9CB770E44AF8CCE /* StageDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageDetailView.swift; sourceTree = "<group>"; };
 		3091D06CA774A8F881B743B5 /* AgentManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentManagementView.swift; sourceTree = "<group>"; };
 		3914B475E14BA6A57CA959A0 /* DebateTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebateTab.swift; sourceTree = "<group>"; };
@@ -50,13 +54,15 @@
 		51903D5540D2ACA6E1039F04 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		5CBDBDDC6F7EAD6ADE00EEDA /* Agent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agent.swift; sourceTree = "<group>"; };
 		69748219E25D1AB6AF17121C /* StageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StageViewModel.swift; sourceTree = "<group>"; };
+		7A9F85FE59E3B1CF7968989B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		7E74BF08A3799115646531B4 /* AgentManagementViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentManagementViewModel.swift; sourceTree = "<group>"; };
 		7FFA8EC033B3B42014802330 /* ProjectRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRowView.swift; sourceTree = "<group>"; };
 		863B52F632F09B8BB7C918FD /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		878B10027777C2B321F96C26 /* SpeechRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognizer.swift; sourceTree = "<group>"; };
 		8F3FB1691740E84C7C994A09 /* CreateProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectView.swift; sourceTree = "<group>"; };
 		8F6DDD733872C990067622E3 /* OverrideTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverrideTab.swift; sourceTree = "<group>"; };
 		9389C6A7E67F4843CC0B4CEE /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
-		A5FE44718968D84D5E40603A /* SocietyOfResearchers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocietyOfResearchers.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5FE44718968D84D5E40603A /* SocietyOfResearchers.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SocietyOfResearchers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB811B2EBEA251EB9084FA4D /* SSEClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClient.swift; sourceTree = "<group>"; };
 		B17E8CE938468936D396F109 /* Stage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
 		BB9181C2ED8838D2E21CFAF0 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
@@ -72,8 +78,8 @@
 		D8AF32B63BA8E3E1A12EF131 /* MarkdownRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderer.swift; sourceTree = "<group>"; };
 		E33A9AF71179E642CCD2761E /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
 		E9ADFD2C22D014C3F177B2F2 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F6789012345678 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		F4077FEC6E88FCB8B26D340A /* SocietyOfResearchersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocietyOfResearchersApp.swift; sourceTree = "<group>"; };
+		F9DB8E492112DF407A847387 /* DictationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationButton.swift; sourceTree = "<group>"; };
 		FC9C6D784E687DAE7B2668F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -151,8 +157,8 @@
 		7780058BDFE13026E95D91D8 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7A9F85FE59E3B1CF7968989B /* HomeView.swift */,
 				8C41CE65071ABC60FFFFE260 /* Agents */,
-				A1B2C3D4E5F6789012345678 /* HomeView.swift */,
 				0D56CA2A3E6F38514AAF55F8 /* ProjectDetail */,
 				8ECDA74AF9610F15E6A6C0AB /* ProjectList */,
 				5CA617077EC80F3BD0B659C0 /* Report */,
@@ -195,6 +201,8 @@
 		9BD13B22D11EEE42A788D789 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				0411E7167237C0BE5F0C827C /* AgentAvatarView.swift */,
+				F9DB8E492112DF407A847387 /* DictationButton.swift */,
 				9389C6A7E67F4843CC0B4CEE /* ErrorBanner.swift */,
 				863B52F632F09B8BB7C918FD /* LoadingView.swift */,
 				E33A9AF71179E642CCD2761E /* StatusBadge.swift */,
@@ -206,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				D8AF32B63BA8E3E1A12EF131 /* MarkdownRenderer.swift */,
+				878B10027777C2B321F96C26 /* SpeechRecognizer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -261,6 +270,7 @@
 			);
 			mainGroup = 4C1426518757654A6B01F61D;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -287,6 +297,7 @@
 			files = (
 				95BD5FF7CFAD19DC11C33309 /* APIClient.swift in Sources */,
 				7EED55E19B1029869B524BA5 /* Agent.swift in Sources */,
+				5D69C69D3534F29A09AE2B94 /* AgentAvatarView.swift in Sources */,
 				20344C6E06F64871C5E49E10 /* AgentCardView.swift in Sources */,
 				6B2628A67F2519CD939ABD8D /* AgentFormView.swift in Sources */,
 				30B90FA394ED93C50DF26424 /* AgentManagementView.swift in Sources */,
@@ -296,8 +307,9 @@
 				A04BBE0BE0ED678BD765C2F2 /* Conflict.swift in Sources */,
 				D778D5D99077BB647E5D7264 /* CreateProjectView.swift in Sources */,
 				357393AB52CF35ADEB4C9C80 /* DebateTab.swift in Sources */,
+				9B4C8C98B785E88A436434F6 /* DictationButton.swift in Sources */,
 				BDE474C5CB4B85B525122FA8 /* ErrorBanner.swift in Sources */,
-				B2C3D4E5F67890123456A1B2 /* HomeView.swift in Sources */,
+				7F818A302A64063C24A9233E /* HomeView.swift in Sources */,
 				D5AF0F3E4C735E1E40FD6EA7 /* LoadingView.swift in Sources */,
 				F585F5D9A6C72718934D7DFD /* MarkdownRenderer.swift in Sources */,
 				783D6D95EC72803011B8DCE0 /* OverrideTab.swift in Sources */,
@@ -312,6 +324,7 @@
 				8BF9CB23758D119F91A8A2BC /* ReportViewModel.swift in Sources */,
 				0A374F38C34CCBDAF820BF9C /* SSEClient.swift in Sources */,
 				C8B3EF4C8507F25563BA8DBD /* SocietyOfResearchersApp.swift in Sources */,
+				03E4779A084B8F9200AD069D /* SpeechRecognizer.swift in Sources */,
 				319664760F961E71C21557AB /* Stage.swift in Sources */,
 				499A52408B01AC86CF7E767B /* StageDetailView.swift in Sources */,
 				7AD99605330C771BF672AC3F /* StageViewModel.swift in Sources */,
@@ -448,9 +461,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A8T4A3Z85B;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Voice dictation for research inputs";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Convert speech to text for research questions and notes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -475,9 +489,10 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = A8T4A3Z85B;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Voice dictation for research inputs";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Convert speech to text for research questions and notes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

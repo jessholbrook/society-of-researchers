@@ -72,6 +72,16 @@ CREATE TABLE IF NOT EXISTS agent_outputs (
     FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
     FOREIGN KEY (stage_result_id) REFERENCES stage_results(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS documents (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL,
+    filename TEXT NOT NULL,
+    content_type TEXT NOT NULL,
+    extracted_text TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
 """
 
 
@@ -325,3 +335,55 @@ class Database:
             conflict_partners=json.loads(row["conflict_partners"]),
             enabled=bool(row["enabled"]), project_id=row["project_id"],
         )
+
+    # --- Documents ---
+
+    async def create_document(
+        self, doc_id: str, project_id: str, filename: str, content_type: str, extracted_text: str
+    ) -> dict:
+        async with self._connect() as db:
+            await db.execute(
+                "INSERT INTO documents (id, project_id, filename, content_type, extracted_text) "
+                "VALUES (?, ?, ?, ?, ?)",
+                (doc_id, project_id, filename, content_type, extracted_text),
+            )
+            await db.commit()
+        return {
+            "id": doc_id,
+            "project_id": project_id,
+            "filename": filename,
+            "content_type": content_type,
+            "text_length": len(extracted_text),
+        }
+
+    async def list_documents(self, project_id: str) -> list[dict]:
+        async with self._connect() as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                "SELECT id, project_id, filename, content_type, "
+                "LENGTH(extracted_text) as text_length, created_at "
+                "FROM documents WHERE project_id = ? ORDER BY created_at", (project_id,)
+            )
+            rows = await cursor.fetchall()
+            return [dict(r) for r in rows]
+
+    async def delete_document(self, doc_id: str) -> None:
+        async with self._connect() as db:
+            await db.execute("DELETE FROM documents WHERE id = ?", (doc_id,))
+            await db.commit()
+
+    async def get_documents_text(self, project_id: str) -> str:
+        """Return concatenated extracted text from all documents for a project."""
+        async with self._connect() as db:
+            db.row_factory = aiosqlite.Row
+            cursor = await db.execute(
+                "SELECT filename, extracted_text FROM documents WHERE project_id = ? ORDER BY created_at",
+                (project_id,),
+            )
+            rows = await cursor.fetchall()
+            if not rows:
+                return ""
+            parts = []
+            for r in rows:
+                parts.append(f"## {r['filename']}\n{r['extracted_text']}")
+            return "\n\n".join(parts)

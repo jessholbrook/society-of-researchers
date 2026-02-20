@@ -14,8 +14,12 @@ struct OverrideTab: View {
                     .foregroundStyle(.secondary)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Researcher Context")
-                        .font(.subheadline.bold())
+                    HStack {
+                        Text("Researcher Context")
+                            .font(.subheadline.bold())
+                        Spacer()
+                        DictationButton(text: $viewModel.overrideContent)
+                    }
 
                     TextEditor(text: $viewModel.overrideContent)
                         .frame(minHeight: 200)
@@ -28,8 +32,12 @@ struct OverrideTab: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Notes to Researcher (Optional)")
-                        .font(.subheadline.bold())
+                    HStack {
+                        Text("Notes to Researcher (Optional)")
+                            .font(.subheadline.bold())
+                        Spacer()
+                        DictationButton(text: $viewModel.overrideNotes)
+                    }
 
                     TextEditor(text: $viewModel.overrideNotes)
                         .frame(minHeight: 80)

@@ -34,7 +34,9 @@ actor SSEClient {
         stageNumber: Int,
         onEvent: @MainActor @Sendable @escaping (SSEEvent) -> Void
     ) -> Task<Void, Never> {
-        let url = baseURL.appendingPathComponent("/api/projects/\(projectId)/stages/\(stageNumber)/run")
+        guard let url = URL(string: baseURL.absoluteString + "/api/projects/\(projectId)/stages/\(stageNumber)/run") else {
+            return Task {}
+        }
 
         return Task {
             do {
@@ -44,8 +46,23 @@ actor SSEClient {
 
                 let (bytes, response) = try await URLSession.shared.bytes(for: request)
 
-                guard let httpResponse = response as? HTTPURLResponse,
-                      (200...299).contains(httpResponse.statusCode) else {
+                guard let httpResponse = response as? HTTPURLResponse else { return }
+
+                guard (200...299).contains(httpResponse.statusCode) else {
+                    // Read error body and surface it
+                    var errorBody = ""
+                    for try await line in bytes.lines {
+                        errorBody += line
+                    }
+                    // Try to extract detail from JSON error response
+                    var detail = "HTTP \(httpResponse.statusCode)"
+                    if let data = errorBody.data(using: .utf8),
+                       let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let d = json["detail"] as? String {
+                        detail = d
+                    }
+                    let errorEvent = SSEEvent(type: .stageComplete, json: ["error": detail])
+                    await onEvent(errorEvent)
                     return
                 }
 

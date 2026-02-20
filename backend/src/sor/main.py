@@ -10,7 +10,7 @@ from .config import settings
 from .engine.llm_client import LLMClient
 from .engine.orchestrator import StageOrchestrator
 from .store.database import Database
-from .routes import projects, stages, agents
+from .routes import projects, stages, agents, documents
 
 # Module-level state accessible to routes
 app_state: dict = {}
@@ -61,6 +61,7 @@ app.include_router(projects.router)
 app.include_router(stages.router)
 app.include_router(stages.report_router)
 app.include_router(agents.router)
+app.include_router(documents.router)
 
 
 @app.get("/api/health")

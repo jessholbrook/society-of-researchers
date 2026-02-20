@@ -16,14 +16,24 @@ struct CreateProjectView: View {
                     TextField("e.g. Remote Work Productivity", text: $name)
                 }
 
-                Section("Research Question") {
-                    TextField("What do you want to investigate?", text: $question, axis: .vertical)
-                        .lineLimit(3...6)
+                Section {
+                    HStack(alignment: .top) {
+                        TextField("What do you want to investigate?", text: $question, axis: .vertical)
+                            .lineLimit(3...6)
+                        DictationButton(text: $question)
+                    }
+                } header: {
+                    Text("Research Question")
                 }
 
-                Section("Context (Optional)") {
-                    TextField("Background, constraints, audience...", text: $context, axis: .vertical)
-                        .lineLimit(3...6)
+                Section {
+                    HStack(alignment: .top) {
+                        TextField("Background, constraints, audience...", text: $context, axis: .vertical)
+                            .lineLimit(3...6)
+                        DictationButton(text: $context)
+                    }
+                } header: {
+                    Text("Context (Optional)")
                 }
             }
             .navigationTitle("New Project")

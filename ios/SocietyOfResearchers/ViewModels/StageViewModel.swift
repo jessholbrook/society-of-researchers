@@ -18,6 +18,7 @@ final class StageViewModel {
     // Streaming state
     var activeAgents: Set<String> = []
     var streamingOutputs: [String: StreamingAgentOutput] = [:]
+    var isConflictDetecting = false
 
     // Tab selection
     var selectedTab: StageTab = .outputs
@@ -101,14 +102,17 @@ final class StageViewModel {
             }
 
         case .conflictStart:
-            break // Could show an indicator
+            isConflictDetecting = true
 
         case .conflictComplete:
-            // Conflict report arrives — we'll get the full data on stage_complete refresh
-            break
+            isConflictDetecting = false
 
         case .stageComplete:
             isRunning = false
+            isConflictDetecting = false
+            if let errorMsg = event.error {
+                self.error = errorMsg
+            }
         }
     }
 
@@ -175,7 +179,7 @@ final class StageViewModel {
     // MARK: - Computed
 
     var canRun: Bool {
-        stageResult == nil || stageResult?.status == .pending
+        stageResult == nil || stageResult?.status == .pending || stageResult?.status == .complete
     }
 
     var canApprove: Bool {

@@ -148,6 +148,45 @@ actor APIClient {
         try await post(path: "/api/agents/\(id)/toggle")
     }
 
+    // MARK: - Documents
+
+    func listDocuments(projectId: String) async throws -> [DocumentResponse] {
+        try await get(path: "/api/projects/\(projectId)/documents")
+    }
+
+    func uploadDocument(projectId: String, fileData: Data, filename: String, contentType: String) async throws -> DocumentResponse {
+        guard let url = URL(string: baseURL.absoluteString + "/api/projects/\(projectId)/documents") else {
+            throw APIError.invalidResponse
+        }
+
+        let boundary = "Boundary-\(UUID().uuidString)"
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(contentType)\r\n\r\n".data(using: .utf8)!)
+        body.append(fileData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        req.httpBody = body
+
+        let (data, response) = try await session.data(for: req)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            let detail = (try? JSONDecoder().decode(ErrorDetail.self, from: data))?.detail
+            throw APIError.httpError(statusCode: httpResponse.statusCode, detail: detail)
+        }
+        return try decoder.decode(DocumentResponse.self, from: data)
+    }
+
+    func deleteDocument(projectId: String, docId: String) async throws -> OkResponse {
+        try await delete(path: "/api/projects/\(projectId)/documents/\(docId)")
+    }
+
     // MARK: - Report
 
     struct ReportResponse: Decodable {
@@ -173,6 +212,23 @@ struct ToggleResponse: Decodable {
 
 struct ErrorDetail: Decodable {
     let detail: String?
+}
+
+struct DocumentResponse: Codable, Identifiable, Sendable {
+    let id: String
+    let projectId: String?
+    let filename: String
+    let contentType: String?
+    let textLength: Int?
+    let createdAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, filename
+        case projectId = "project_id"
+        case contentType = "content_type"
+        case textLength = "text_length"
+        case createdAt = "created_at"
+    }
 }
 
 enum APIError: LocalizedError {
