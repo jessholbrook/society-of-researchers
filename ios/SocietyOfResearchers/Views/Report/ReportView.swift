@@ -19,6 +19,7 @@ struct ReportView: View {
                     // Rendered markdown
                     MarkdownRenderer(markdown: report)
                         .padding(.horizontal)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     // Regenerate button
                     Button {
@@ -29,6 +30,7 @@ struct ReportView: View {
                     }
                     .buttonStyle(.bordered)
                     .padding()
+                    .padding(.bottom, 40)
                 } else {
                     // No report yet
                     VStack(spacing: 16) {
@@ -51,6 +53,7 @@ struct ReportView: View {
                 }
             }
         }
+        .scrollIndicators(.visible)
         .navigationTitle("Report")
         .navigationBarTitleDisplayMode(.inline)
         .overlay {

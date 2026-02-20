@@ -97,7 +97,7 @@ class StageOrchestrator:
             return await self._run_single_agent(agent, user_message, project.id)
 
         tasks = [
-            _staggered_run(agent, i * 3.0)  # 3 second stagger between agents
+            _staggered_run(agent, i * 5.0)  # 5 second stagger between agents
             for i, agent in enumerate(enabled_agents)
         ]
         agent_outputs: list[AgentOutput] = await asyncio.gather(*tasks)

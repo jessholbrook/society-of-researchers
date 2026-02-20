@@ -14,7 +14,7 @@ struct OverrideTab: View {
                     .foregroundStyle(.secondary)
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Content")
+                    Text("Researcher Context")
                         .font(.subheadline.bold())
 
                     TextEditor(text: $viewModel.overrideContent)
@@ -28,7 +28,7 @@ struct OverrideTab: View {
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Notes (Optional)")
+                    Text("Notes to Researcher (Optional)")
                         .font(.subheadline.bold())
 
                     TextEditor(text: $viewModel.overrideNotes)

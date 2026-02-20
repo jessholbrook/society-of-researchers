@@ -10,11 +10,20 @@ struct PipelineView: View {
             HStack(spacing: 8) {
                 ForEach(StageInfo.all, id: \.number) { info in
                     let result = stageResults.first { $0.stageNumber == info.number }
-                    PipelineStageCard(
-                        info: info,
-                        status: result?.status,
-                        isCurrent: info.number == currentStage
-                    )
+                    NavigationLink {
+                        StageDetailView(
+                            projectId: projectId,
+                            stageNumber: info.number,
+                            existingResult: result
+                        )
+                    } label: {
+                        PipelineStageCard(
+                            info: info,
+                            status: result?.status,
+                            isCurrent: info.number == currentStage
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 4)

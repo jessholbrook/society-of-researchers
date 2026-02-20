@@ -22,9 +22,6 @@ final class StageViewModel {
     // Tab selection
     var selectedTab: StageTab = .outputs
 
-    // Tracks whether we just advanced (for UI transitions)
-    var didAdvance = false
-
     private var streamTask: Task<Void, Never>?
     private let sseClient = SSEClient()
 
@@ -143,7 +140,7 @@ final class StageViewModel {
         }
     }
 
-    /// Reset state for the next stage and auto-run it.
+    /// Reset state for the next stage (user initiates the run).
     func advanceToStage(_ next: Int) {
         stageNumber = next
         stageResult = nil
@@ -153,10 +150,6 @@ final class StageViewModel {
         streamingOutputs = [:]
         selectedTab = .outputs
         error = nil
-        didAdvance = true
-
-        // Auto-run the next stage
-        runStage()
     }
 
     // MARK: - Override

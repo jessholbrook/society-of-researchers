@@ -25,6 +25,11 @@ struct ProjectDetailView: View {
                     projectId: viewModel.project.id
                 )
 
+                // Report section (when complete)
+                if viewModel.isComplete {
+                    reportSection
+                }
+
                 // Current stage card
                 if let stageInfo = viewModel.currentStageInfo {
                     currentStageCard(stageInfo)
@@ -54,6 +59,9 @@ struct ProjectDetailView: View {
         }
         .task {
             await viewModel.refresh()
+        }
+        .onAppear {
+            Task { await viewModel.refresh() }
         }
     }
 
@@ -165,6 +173,40 @@ struct ProjectDetailView: View {
         }
     }
 
+    private var reportSection: some View {
+        NavigationLink {
+            ReportView(projectId: viewModel.project.id, projectName: viewModel.project.name)
+        } label: {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "doc.text.fill")
+                        .font(.title2)
+                        .foregroundStyle(.indigo)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Research Report")
+                            .font(.headline)
+                        Text("View or generate the final synthesis")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.tertiary)
+                }
+            }
+            .padding()
+            .background(
+                LinearGradient(
+                    colors: [.indigo.opacity(0.08), .purple.opacity(0.05)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: RoundedRectangle(cornerRadius: 12)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     private var actionsSection: some View {
         VStack(spacing: 12) {
             NavigationLink {
@@ -176,18 +218,6 @@ struct ProjectDetailView: View {
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)
-
-            if viewModel.isComplete {
-                NavigationLink {
-                    ReportView(projectId: viewModel.project.id, projectName: viewModel.project.name)
-                } label: {
-                    Label("View Report", systemImage: "doc.text")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                }
-                .buttonStyle(.plain)
-            }
         }
     }
 }
