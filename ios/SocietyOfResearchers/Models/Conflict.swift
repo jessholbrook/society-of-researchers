@@ -39,10 +39,14 @@ struct ConflictReport: Codable, Sendable {
     var agreements: [AgreementPoint] = []
     var disagreements: [DisagreementPoint] = []
     var unresolvedTensions: [String] = []
+    var withinAgentContradictions: [String] = []
+    var evidenceChainBreaks: [String] = []
     var synthesis: String = ""
 
     enum CodingKeys: String, CodingKey {
         case stage, agreements, disagreements, synthesis
         case unresolvedTensions = "unresolved_tensions"
+        case withinAgentContradictions = "within_agent_contradictions"
+        case evidenceChainBreaks = "evidence_chain_breaks"
     }
 }

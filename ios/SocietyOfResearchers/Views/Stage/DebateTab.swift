@@ -53,6 +53,42 @@ struct DebateTab: View {
                         }
                     }
 
+                    // Within-Agent Contradictions
+                    if !report.withinAgentContradictions.isEmpty {
+                        debateSection(
+                            title: "Self-Contradictions",
+                            icon: "arrow.triangle.2.circlepath",
+                            color: .purple,
+                            count: report.withinAgentContradictions.count
+                        ) {
+                            ForEach(report.withinAgentContradictions, id: \.self) { contradiction in
+                                Text(contradiction)
+                                    .font(.body)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(.purple.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+                    }
+
+                    // Evidence Chain Breaks
+                    if !report.evidenceChainBreaks.isEmpty {
+                        debateSection(
+                            title: "Evidence Gaps",
+                            icon: "link.badge.plus",
+                            color: .pink,
+                            count: report.evidenceChainBreaks.count
+                        ) {
+                            ForEach(report.evidenceChainBreaks, id: \.self) { gap in
+                                Text(gap)
+                                    .font(.body)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(.pink.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+                    }
+
                     // Synthesis
                     if !report.synthesis.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {

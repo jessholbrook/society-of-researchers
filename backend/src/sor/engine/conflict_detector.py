@@ -14,6 +14,12 @@ You are an expert research conflict analyst. Your job is to carefully compare \
 multiple research agent outputs and identify where they agree, where they \
 disagree, and what tensions remain unresolved.
 
+You perform FOUR types of analysis:
+1. CROSS-AGENT: Where do different agents agree or disagree with each other?
+2. WITHIN-AGENT: Does any single agent contradict itself (saying X in one section and not-X in another)?
+3. EVIDENCE CHAINS: Are there claims presented as well-supported that actually lack traceable evidence?
+4. STAGE CONSISTENCY: Do the outputs build logically on prior stage results, or do they silently drop or contradict earlier findings?
+
 Analyze the provided agent outputs and return a JSON object with this exact structure:
 
 {
@@ -48,7 +54,13 @@ Analyze the provided agent outputs and return a JSON object with this exact stru
   "unresolved_tensions": [
     "Description of a tension that cannot be easily resolved with available evidence"
   ],
-  "synthesis": "A balanced 2-4 sentence summary that integrates the strongest points from all agents, acknowledges key disagreements, and suggests a path forward."
+  "within_agent_contradictions": [
+    "Agent Name: states [X] in section A but [not-X] in section B"
+  ],
+  "evidence_chain_breaks": [
+    "Agent Name: claims [specific claim] but cites no traceable source for it"
+  ],
+  "synthesis": "A balanced 2-4 sentence summary that integrates the strongest points from all agents, acknowledges key disagreements, flags any integrity issues found, and suggests a path forward."
 }
 
 Rules:
@@ -56,7 +68,10 @@ Rules:
 - Confidence scores should range from 0.0 to 1.0 based on the strength of evidence.
 - If agents largely agree, note that and keep disagreements empty.
 - If agents largely disagree, still look for any common ground.
+- Check EVERY agent for internal contradictions. Even small ones matter.
+- Flag any claim that sounds authoritative but lacks a cited source — these are the most dangerous.
 - The synthesis should be actionable and balanced, not merely descriptive.
+- If within_agent_contradictions or evidence_chain_breaks are found, the synthesis MUST mention them.
 - Only output valid JSON. No markdown fences, no commentary outside the JSON.
 """
 
@@ -109,6 +124,8 @@ async def detect_conflicts(
         agreements=data.get("agreements", []),
         disagreements=data.get("disagreements", []),
         unresolved_tensions=data.get("unresolved_tensions", []),
+        within_agent_contradictions=data.get("within_agent_contradictions", []),
+        evidence_chain_breaks=data.get("evidence_chain_breaks", []),
         synthesis=data.get("synthesis", ""),
     )
 

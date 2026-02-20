@@ -28,4 +28,6 @@ class ConflictReport(BaseModel):
     agreements: list[AgreementPoint] = Field(default_factory=list)
     disagreements: list[DisagreementPoint] = Field(default_factory=list)
     unresolved_tensions: list[str] = Field(default_factory=list)
+    within_agent_contradictions: list[str] = Field(default_factory=list)
+    evidence_chain_breaks: list[str] = Field(default_factory=list)
     synthesis: str = ""

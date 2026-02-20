@@ -279,8 +279,12 @@ class StageOrchestrator:
     def _build_user_message(project: Project, prior_context: str) -> str:
         """Assemble the full user message sent to each agent.
 
-        Combines the research question, any project-level context, and
+        Combines the research question, structured context components, and
         the accumulated context from prior approved stages.
+
+        The structured context ensures every agent receives consistent framing
+        about what is being researched, why, and for whom — preventing generic
+        or context-free analysis.
         """
         sections: list[str] = []
 
@@ -288,8 +292,19 @@ class StageOrchestrator:
         sections.append(project.research_question)
 
         if project.context:
-            sections.append("\n# Project Context")
+            sections.append("\n# Structured Context")
+            sections.append(
+                "Use the following context to ground ALL of your analysis. "
+                "Every claim, theme, and recommendation you produce must be "
+                "specific to this context — not generic advice that could apply "
+                "to any organization.\n"
+            )
             sections.append(project.context)
+            sections.append(
+                "\n**Grounding Rule:** Before finalizing any insight, check: "
+                "'Would this insight change if the company, product, or audience were different?' "
+                "If the answer is no, make it more specific to the context above."
+            )
 
         if prior_context:
             sections.append("\n# Prior Stage Results")
@@ -300,6 +315,10 @@ class StageOrchestrator:
             "\nProvide your analysis based on your assigned role and perspective. "
             "Be thorough, cite evidence where possible, and clearly state your "
             "confidence level in key claims."
+            "\n\n**Quality Gates:**"
+            "\n- Every claim must be traceable to specific evidence. Mark unsourced claims."
+            "\n- Every insight must be specific to this project's context. Flag generic observations."
+            "\n- Every recommendation must state what decision it enables. Omit decision-inert findings."
         )
 
         return "\n".join(sections)
