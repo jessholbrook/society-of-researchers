@@ -3,7 +3,7 @@ import Foundation
 @MainActor @Observable
 final class StageViewModel {
     let projectId: String
-    let stageNumber: Int
+    private(set) var stageNumber: Int
 
     var stageResult: StageResult?
     var isRunning = false
@@ -21,6 +21,9 @@ final class StageViewModel {
 
     // Tab selection
     var selectedTab: StageTab = .outputs
+
+    // Tracks whether we just advanced (for UI transitions)
+    var didAdvance = false
 
     private var streamTask: Task<Void, Never>?
     private let sseClient = SSEClient()
@@ -126,12 +129,34 @@ final class StageViewModel {
             let response = try await APIClient.shared.approveStage(projectId: projectId, stageNumber: stageNumber)
             await load() // Refresh to get approved status
             isApproving = false
+
+            // Auto-advance to next stage if not final
+            if let nextStage = response.nextStage, response.complete != true {
+                advanceToStage(nextStage)
+            }
+
             return response
         } catch {
             self.error = error.localizedDescription
             isApproving = false
             return nil
         }
+    }
+
+    /// Reset state for the next stage and auto-run it.
+    func advanceToStage(_ next: Int) {
+        stageNumber = next
+        stageResult = nil
+        overrideContent = ""
+        overrideNotes = ""
+        activeAgents = []
+        streamingOutputs = [:]
+        selectedTab = .outputs
+        error = nil
+        didAdvance = true
+
+        // Auto-run the next stage
+        runStage()
     }
 
     // MARK: - Override

@@ -21,7 +21,9 @@ actor APIClient {
     // MARK: - Generic HTTP Methods
 
     private func request<T: Decodable>(_ method: String, path: String, body: (any Encodable)? = nil) async throws -> T {
-        let url = baseURL.appendingPathComponent(path)
+        guard let url = URL(string: baseURL.absoluteString + path) else {
+            throw APIError.invalidResponse
+        }
         var req = URLRequest(url: url)
         req.httpMethod = method
 

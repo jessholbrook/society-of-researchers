@@ -52,9 +52,32 @@ struct StageDetailView: View {
                 }
             }
         }
+        .overlay {
+            if viewModel.didAdvance && viewModel.isRunning {
+                advanceBanner
+            }
+        }
         .task {
             await viewModel.load()
         }
+    }
+
+    private var advanceBanner: some View {
+        VStack {
+            HStack {
+                Image(systemName: "forward.fill")
+                Text("Advanced to Stage \(viewModel.stageNumber): \(viewModel.stageName)")
+                    .font(.subheadline.weight(.medium))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(.blue, in: Capsule())
+            .foregroundStyle(.white)
+            .padding(.top, 8)
+            Spacer()
+        }
+        .transition(.move(edge: .top).combined(with: .opacity))
+        .animation(.spring(duration: 0.4), value: viewModel.didAdvance)
     }
 
     private var stageHeader: some View {
@@ -102,13 +125,14 @@ struct StageDetailView: View {
                                 if response.complete == true && viewModel.isFinalStage {
                                     navigateToReport = true
                                 }
+                                // Non-final: advanceToStage is called inside approve()
                             }
                         }
                     } label: {
                         if viewModel.isFinalStage {
                             Label("Complete & Generate Report", systemImage: "checkmark.seal")
                         } else {
-                            Label("Approve", systemImage: "checkmark.circle")
+                            Label("Approve & Continue", systemImage: "checkmark.circle")
                         }
                     }
                     .buttonStyle(.borderedProminent)
@@ -116,7 +140,7 @@ struct StageDetailView: View {
                     .disabled(viewModel.isApproving)
                 }
 
-                if viewModel.isApproved {
+                if viewModel.isApproved && !viewModel.isFinalStage {
                     Label("Approved", systemImage: "checkmark.seal.fill")
                         .font(.subheadline)
                         .foregroundStyle(.green)

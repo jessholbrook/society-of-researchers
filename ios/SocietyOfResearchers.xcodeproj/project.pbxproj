@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -32,6 +32,7 @@
 		BAD1655295FED30EDAF83946 /* AgentOutputsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = C425C79B4DFAC5B8AED2E65E /* AgentOutputsTab.swift */; };
 		BC2D06FCEBC88420F9729D8C /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58DFC17528C4EDE44A399CD /* Configuration.swift */; };
 		BDE474C5CB4B85B525122FA8 /* ErrorBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9389C6A7E67F4843CC0B4CEE /* ErrorBanner.swift */; };
+		B2C3D4E5F67890123456A1B2 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6789012345678 /* HomeView.swift */; };
 		C8B3EF4C8507F25563BA8DBD /* SocietyOfResearchersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4077FEC6E88FCB8B26D340A /* SocietyOfResearchersApp.swift */; };
 		CD1300C4A2BE59BA670D1805 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51903D5540D2ACA6E1039F04 /* Project.swift */; };
 		D5AF0F3E4C735E1E40FD6EA7 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863B52F632F09B8BB7C918FD /* LoadingView.swift */; };
@@ -55,7 +56,7 @@
 		8F3FB1691740E84C7C994A09 /* CreateProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectView.swift; sourceTree = "<group>"; };
 		8F6DDD733872C990067622E3 /* OverrideTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverrideTab.swift; sourceTree = "<group>"; };
 		9389C6A7E67F4843CC0B4CEE /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
-		A5FE44718968D84D5E40603A /* SocietyOfResearchers.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SocietyOfResearchers.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5FE44718968D84D5E40603A /* SocietyOfResearchers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocietyOfResearchers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB811B2EBEA251EB9084FA4D /* SSEClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClient.swift; sourceTree = "<group>"; };
 		B17E8CE938468936D396F109 /* Stage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
 		BB9181C2ED8838D2E21CFAF0 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
@@ -71,6 +72,7 @@
 		D8AF32B63BA8E3E1A12EF131 /* MarkdownRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownRenderer.swift; sourceTree = "<group>"; };
 		E33A9AF71179E642CCD2761E /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
 		E9ADFD2C22D014C3F177B2F2 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6789012345678 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		F4077FEC6E88FCB8B26D340A /* SocietyOfResearchersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocietyOfResearchersApp.swift; sourceTree = "<group>"; };
 		FC9C6D784E687DAE7B2668F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				8C41CE65071ABC60FFFFE260 /* Agents */,
+				A1B2C3D4E5F6789012345678 /* HomeView.swift */,
 				0D56CA2A3E6F38514AAF55F8 /* ProjectDetail */,
 				8ECDA74AF9610F15E6A6C0AB /* ProjectList */,
 				5CA617077EC80F3BD0B659C0 /* Report */,
@@ -258,7 +261,6 @@
 			);
 			mainGroup = 4C1426518757654A6B01F61D;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -295,6 +297,7 @@
 				D778D5D99077BB647E5D7264 /* CreateProjectView.swift in Sources */,
 				357393AB52CF35ADEB4C9C80 /* DebateTab.swift in Sources */,
 				BDE474C5CB4B85B525122FA8 /* ErrorBanner.swift in Sources */,
+				B2C3D4E5F67890123456A1B2 /* HomeView.swift in Sources */,
 				D5AF0F3E4C735E1E40FD6EA7 /* LoadingView.swift in Sources */,
 				F585F5D9A6C72718934D7DFD /* MarkdownRenderer.swift in Sources */,
 				783D6D95EC72803011B8DCE0 /* OverrideTab.swift in Sources */,
@@ -445,6 +448,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A8T4A3Z85B;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -471,6 +475,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A8T4A3Z85B;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

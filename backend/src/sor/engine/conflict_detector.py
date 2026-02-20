@@ -10,15 +10,24 @@ from ..models import AgentOutput, ConflictReport
 from .llm_client import LLMClient, LLMError
 
 CONFLICT_DETECTION_PROMPT = """\
-You are an expert research conflict analyst. Your job is to carefully compare \
-multiple research agent outputs and identify where they agree, where they \
-disagree, and what tensions remain unresolved.
+You are an expert research conflict analyst. Your PRIMARY job is to surface \
+disagreements, tensions, and contradictions between research agents. Agreement \
+is expected — disagreement is where the real insight lives.
 
 You perform FOUR types of analysis:
 1. CROSS-AGENT: Where do different agents agree or disagree with each other?
 2. WITHIN-AGENT: Does any single agent contradict itself (saying X in one section and not-X in another)?
 3. EVIDENCE CHAINS: Are there claims presented as well-supported that actually lack traceable evidence?
 4. STAGE CONSISTENCY: Do the outputs build logically on prior stage results, or do they silently drop or contradict earlier findings?
+
+CRITICAL: Dig deep for disagreements. Even when agents seem to agree on the surface, look for:
+- Different EMPHASIS or PRIORITIZATION (one agent treats X as primary, another as secondary)
+- Different SCOPE or FRAMING (one agent frames the problem narrowly, another broadly)
+- Different ASSUMPTIONS underlying similar conclusions
+- Different EVIDENCE cited for the same claim
+- Different CONFIDENCE levels in the same finding
+- OMISSIONS — what one agent covers that others ignore entirely
+- IMPLICIT vs EXPLICIT disagreements (agents may agree on "what" but disagree on "why" or "how much")
 
 Analyze the provided agent outputs and return a JSON object with this exact structure:
 
@@ -64,10 +73,9 @@ Analyze the provided agent outputs and return a JSON object with this exact stru
 }
 
 Rules:
-- Be thorough: identify ALL meaningful agreements and disagreements.
+- PRIORITIZE finding disagreements. Surface AT LEAST 2-3 points of disagreement or tension if there are multiple agents.
+- Look beyond surface-level agreement. Two agents saying "X matters" is agreement, but one saying "X is the #1 priority" while another buries it in a list is a disagreement about emphasis.
 - Confidence scores should range from 0.0 to 1.0 based on the strength of evidence.
-- If agents largely agree, note that and keep disagreements empty.
-- If agents largely disagree, still look for any common ground.
 - Check EVERY agent for internal contradictions. Even small ones matter.
 - Flag any claim that sounds authoritative but lacks a cited source — these are the most dangerous.
 - The synthesis should be actionable and balanced, not merely descriptive.
@@ -119,15 +127,80 @@ async def detect_conflicts(
             unresolved_tensions=["Automated conflict analysis was unsuccessful."],
         )
 
+    # Second pass: if no disagreements found and multiple agents, probe deeper
+    disagreements = data.get("disagreements", [])
+    if not disagreements and len(agent_outputs) >= 2:
+        try:
+            second_pass = await _probe_for_disagreements(
+                agent_outputs, llm_client, stage,
+            )
+            if second_pass:
+                disagreements = second_pass.get("disagreements", [])
+                # Merge any new tensions found
+                existing_tensions = data.get("unresolved_tensions", [])
+                new_tensions = second_pass.get("unresolved_tensions", [])
+                data["unresolved_tensions"] = existing_tensions + new_tensions
+        except LLMError:
+            pass  # Keep first-pass results if second pass fails
+
     return ConflictReport(
         stage=stage,
         agreements=data.get("agreements", []),
-        disagreements=data.get("disagreements", []),
+        disagreements=disagreements,
         unresolved_tensions=data.get("unresolved_tensions", []),
         within_agent_contradictions=data.get("within_agent_contradictions", []),
         evidence_chain_breaks=data.get("evidence_chain_breaks", []),
         synthesis=data.get("synthesis", ""),
     )
+
+
+DISAGREEMENT_PROBE_PROMPT = """\
+You are a research debate facilitator. The initial conflict analysis found NO disagreements \
+between the agents, but that is almost never truly the case when multiple perspectives analyze \
+the same question.
+
+Look specifically for:
+1. FRAMING differences — do agents define the problem differently?
+2. PRIORITY differences — do agents rank the same factors in different orders?
+3. MISSING perspectives — does one agent cover topics others ignore entirely?
+4. METHODOLOGICAL differences — do agents use different reasoning approaches?
+5. IMPLICIT assumptions — what does each agent take for granted that others don't?
+6. DEGREE differences — do agents agree on direction but differ on magnitude/urgency?
+
+Return a JSON object with ONLY these fields:
+{
+  "disagreements": [
+    {
+      "topic": "Short topic label",
+      "summary": "The subtle disagreement found",
+      "positions": [
+        {"agent_name": "...", "position": "...", "evidence": "...", "confidence": 0.7},
+        {"agent_name": "...", "position": "...", "evidence": "...", "confidence": 0.6}
+      ]
+    }
+  ],
+  "unresolved_tensions": ["Any new tensions found"]
+}
+
+Only output valid JSON. No markdown fences.
+"""
+
+
+async def _probe_for_disagreements(
+    agent_outputs: list[AgentOutput],
+    llm_client: LLMClient,
+    stage: int,
+) -> dict | None:
+    """Second pass: probe specifically for disagreements when first pass found none."""
+    user_message = _build_comparison_message(agent_outputs, stage)
+    try:
+        return await llm_client.complete_json(
+            system_prompt=DISAGREEMENT_PROBE_PROMPT,
+            user_message=user_message,
+            temperature=0.2,  # Slightly creative to find subtle differences
+        )
+    except LLMError:
+        return None
 
 
 def _build_comparison_message(agent_outputs: list[AgentOutput], stage: int) -> str:
