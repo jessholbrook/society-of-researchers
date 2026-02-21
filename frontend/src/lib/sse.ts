@@ -13,7 +13,8 @@ export function runStageSSE(
   stageNum: number,
   callbacks: SSECallbacks
 ): () => void {
-  const url = `/api/projects/${projectId}/stages/${stageNum}/run`;
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "";
+  const url = `${apiBase}/api/projects/${projectId}/stages/${stageNum}/run`;
   const eventSource = new EventSource(url);
 
   eventSource.addEventListener("agent_start", (e) => {

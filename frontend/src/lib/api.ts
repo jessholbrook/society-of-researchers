@@ -1,6 +1,6 @@
 import type { Project, StageResult, AgentConfig } from './types';
 
-const API_BASE = "";  // Uses Next.js rewrites
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "";
 
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
@@ -30,7 +30,7 @@ export const api = {
     apiFetch<{ ok: boolean; next_stage?: number; complete?: boolean }>(`/api/projects/${projectId}/stages/${stageNum}/approve`, { method: "POST" }),
   generateReport: async (projectId: string): Promise<{ ok: boolean; report: string }> => {
     // Call backend directly to avoid Next.js proxy timeout on long LLM calls
-    const res = await fetch(`http://localhost:8000/api/projects/${projectId}/report`, {
+    const res = await fetch(`${API_BASE}/api/projects/${projectId}/report`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       signal: AbortSignal.timeout(300_000), // 5 minute timeout
