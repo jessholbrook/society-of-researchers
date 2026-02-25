@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -62,7 +62,7 @@
 		8F3FB1691740E84C7C994A09 /* CreateProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectView.swift; sourceTree = "<group>"; };
 		8F6DDD733872C990067622E3 /* OverrideTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverrideTab.swift; sourceTree = "<group>"; };
 		9389C6A7E67F4843CC0B4CEE /* ErrorBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorBanner.swift; sourceTree = "<group>"; };
-		A5FE44718968D84D5E40603A /* SocietyOfResearchers.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = SocietyOfResearchers.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5FE44718968D84D5E40603A /* SocietyOfResearchers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SocietyOfResearchers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB811B2EBEA251EB9084FA4D /* SSEClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEClient.swift; sourceTree = "<group>"; };
 		B17E8CE938468936D396F109 /* Stage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stage.swift; sourceTree = "<group>"; };
 		BB9181C2ED8838D2E21CFAF0 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
@@ -270,7 +270,6 @@
 			);
 			mainGroup = 4C1426518757654A6B01F61D;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -461,8 +460,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A8T4A3Z85B;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_CFBundleDisplayName = "Society of Researchers";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Voice dictation for research inputs";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Convert speech to text for research questions and notes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -489,8 +491,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A8T4A3Z85B;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_GENERATION_MODE = GeneratedFile;
+				INFOPLIST_KEY_CFBundleDisplayName = "Society of Researchers";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Voice dictation for research inputs";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Convert speech to text for research questions and notes";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
