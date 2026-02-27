@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #f8fafc;
-  --color-foreground: #0f172a;
-  --color-sidebar: #1e293b;
-  --color-sidebar-text: #e2e8f0;
-  --color-sidebar-hover: #334155;
-  --color-sidebar-active: #4f46e5;
-  --color-accent: #4f46e5;
-  --color-accent-light: #6366f1;
+  --color-background: #0a0a0a;
+  --color-foreground: #e4e4e7;
+  --color-sidebar: #0a0a0a;
+  --color-sidebar-text: #a1a1aa;
+  --color-sidebar-hover: #18181b;
+  --color-sidebar-active: #6366f1;
+  --color-accent: #6366f1;
+  --color-accent-light: #818cf8;
   --color-success: #22c55e;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
+  --color-surface: #111113;
+  --color-surface-raised: #18181b;
+  --color-border: #27272a;
   --font-sans: var(--font-inter);
 }
 
@@ -20,7 +23,7 @@ body {
   color: var(--color-foreground);
 }
 
-/* Custom scrollbar for sidebar */
+/* Custom scrollbar */
 .sidebar-scroll::-webkit-scrollbar {
   width: 4px;
 }
@@ -28,7 +31,7 @@ body {
   background: transparent;
 }
 .sidebar-scroll::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #3f3f46;
   border-radius: 2px;
 }
 
@@ -44,4 +47,9 @@ body {
 /* Tab underline transition */
 .tab-active {
   border-bottom: 2px solid var(--color-accent);
+}
+
+/* Glow effect for current stage */
+.stage-glow {
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.15), 0 0 40px rgba(99, 102, 241, 0.05);
 }

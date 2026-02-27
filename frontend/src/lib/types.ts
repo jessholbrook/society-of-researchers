@@ -82,6 +82,7 @@ export interface Project {
   name: string;
   research_question: string;
   context: string;
+  folder: string;
   state: ProjectState;
   current_stage: number;
   stage_results: StageResult[];

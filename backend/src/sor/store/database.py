@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS projects (
     name TEXT NOT NULL,
     research_question TEXT NOT NULL,
     context TEXT DEFAULT '',
+    folder TEXT DEFAULT '',
     state TEXT DEFAULT 'draft',
     current_stage INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now')),
@@ -93,6 +94,11 @@ class Database:
         os.makedirs(os.path.dirname(self._path) or ".", exist_ok=True)
         async with aiosqlite.connect(self._path) as db:
             await db.executescript(SCHEMA)
+            # Migrate: add folder column to existing databases
+            cursor = await db.execute("PRAGMA table_info(projects)")
+            columns = {row[1] for row in await cursor.fetchall()}
+            if "folder" not in columns:
+                await db.execute("ALTER TABLE projects ADD COLUMN folder TEXT DEFAULT ''")
             await db.commit()
 
     def _connect(self) -> aiosqlite.Connection:
@@ -103,10 +109,10 @@ class Database:
     async def create_project(self, project: Project) -> Project:
         async with self._connect() as db:
             await db.execute(
-                "INSERT INTO projects (id, name, research_question, context, state, current_stage, created_at, updated_at) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO projects (id, name, research_question, context, folder, state, current_stage, created_at, updated_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (project.id, project.name, project.research_question, project.context,
-                 project.state, project.current_stage, project.created_at, project.updated_at),
+                 project.folder, project.state, project.current_stage, project.created_at, project.updated_at),
             )
             await db.commit()
         return project
@@ -120,7 +126,8 @@ class Database:
                 return None
             project = Project(
                 id=row["id"], name=row["name"], research_question=row["research_question"],
-                context=row["context"], state=ProjectState(row["state"]),
+                context=row["context"], folder=row["folder"] or "",
+                state=ProjectState(row["state"]),
                 current_stage=row["current_stage"], created_at=row["created_at"],
                 updated_at=row["updated_at"],
             )
@@ -136,7 +143,8 @@ class Database:
             for row in rows:
                 p = Project(
                     id=row["id"], name=row["name"], research_question=row["research_question"],
-                    context=row["context"], state=ProjectState(row["state"]),
+                    context=row["context"], folder=row["folder"] or "",
+                    state=ProjectState(row["state"]),
                     current_stage=row["current_stage"], created_at=row["created_at"],
                     updated_at=row["updated_at"],
                 )

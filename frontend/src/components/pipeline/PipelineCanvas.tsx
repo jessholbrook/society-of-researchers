@@ -12,23 +12,23 @@ function StageStatusBadge({ status }: { status: StageStatus }) {
   const config: Record<StageStatus, { label: string; className: string }> = {
     pending: {
       label: "Pending",
-      className: "bg-slate-100 text-slate-500",
+      className: "bg-zinc-800 text-zinc-500",
     },
     running: {
       label: "Running",
-      className: "bg-amber-100 text-amber-700 animate-status-pulse",
+      className: "bg-amber-950/60 text-amber-400 animate-status-pulse",
     },
     complete: {
       label: "Complete",
-      className: "bg-blue-100 text-blue-700",
+      className: "bg-blue-950/60 text-blue-400",
     },
     approved: {
       label: "Approved",
-      className: "bg-green-100 text-green-700",
+      className: "bg-emerald-950/60 text-emerald-400",
     },
     skipped: {
       label: "Skipped",
-      className: "bg-slate-100 text-slate-400",
+      className: "bg-zinc-800 text-zinc-600",
     },
   };
   const c = config[status];
@@ -54,10 +54,10 @@ export function PipelineCanvas({ project }: PipelineCanvasProps) {
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
       <div className="flex items-center gap-2 mb-4">
-        <h2 className="text-sm font-semibold text-slate-700">Pipeline</h2>
-        <span className="text-xs text-slate-400">
+        <h2 className="text-sm font-semibold text-zinc-300">Pipeline</h2>
+        <span className="text-xs text-zinc-600">
           Stage {project.current_stage} of 6
         </span>
       </div>
@@ -72,20 +72,20 @@ export function PipelineCanvas({ project }: PipelineCanvasProps) {
               {/* Stage card */}
               <Link
                 href={`/projects/${project.id}/stages/${stageNum}`}
-                className={`flex-1 min-w-[140px] rounded-lg border p-3 transition-all hover:shadow-md ${
+                className={`flex-1 min-w-[140px] rounded-lg border p-3 transition-all hover:bg-zinc-800/80 ${
                   isCurrent
-                    ? "border-indigo-400 bg-indigo-50 shadow-sm ring-1 ring-indigo-200"
+                    ? "border-indigo-500/50 bg-indigo-950/30 stage-glow"
                     : status === "approved"
-                    ? "border-green-200 bg-green-50/50"
+                    ? "border-emerald-800/40 bg-emerald-950/20"
                     : status === "complete"
-                    ? "border-blue-200 bg-blue-50/30"
-                    : "border-slate-200 bg-white hover:border-slate-300"
+                    ? "border-blue-800/40 bg-blue-950/20"
+                    : "border-zinc-800 bg-zinc-900/50 hover:border-zinc-700"
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span
                     className={`text-[10px] font-bold uppercase tracking-wider ${
-                      isCurrent ? "text-indigo-600" : "text-slate-400"
+                      isCurrent ? "text-indigo-400" : "text-zinc-600"
                     }`}
                   >
                     Stage {stageNum}
@@ -94,19 +94,14 @@ export function PipelineCanvas({ project }: PipelineCanvasProps) {
                 </div>
                 <h3
                   className={`text-xs font-medium leading-tight mb-2 ${
-                    isCurrent ? "text-indigo-900" : "text-slate-700"
+                    isCurrent ? "text-indigo-200" : "text-zinc-400"
                   }`}
                 >
                   {STAGE_NAMES[stageNum]}
                 </h3>
                 {agentCount > 0 && (
-                  <div className="flex items-center gap-1 text-[10px] text-slate-400">
-                    <svg
-                      className="w-3 h-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                  <div className="flex items-center gap-1 text-[10px] text-zinc-600">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -122,7 +117,7 @@ export function PipelineCanvas({ project }: PipelineCanvasProps) {
               {/* Connector arrow */}
               {idx < stages.length - 1 && (
                 <div className="flex items-center px-1.5 flex-shrink-0">
-                  <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-zinc-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>

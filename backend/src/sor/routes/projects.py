@@ -13,12 +13,14 @@ class CreateProjectRequest(BaseModel):
     name: str
     research_question: str
     context: str = ""
+    folder: str = ""
 
 
 class UpdateProjectRequest(BaseModel):
     name: str | None = None
     research_question: str | None = None
     context: str | None = None
+    folder: str | None = None
 
 
 def get_db() -> Database:
@@ -29,7 +31,7 @@ def get_db() -> Database:
 @router.post("", response_model=Project)
 async def create_project(req: CreateProjectRequest) -> Project:
     db = get_db()
-    project = Project(name=req.name, research_question=req.research_question, context=req.context)
+    project = Project(name=req.name, research_question=req.research_question, context=req.context, folder=req.folder)
     await db.create_project(project)
     # Clone default agents for this project
     await db.clone_defaults_for_project(project.id)

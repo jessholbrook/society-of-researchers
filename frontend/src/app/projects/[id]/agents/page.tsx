@@ -111,8 +111,8 @@ export default function AgentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-        <span className="ml-3 text-sm text-slate-500">Loading agents...</span>
+        <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <span className="ml-3 text-sm text-zinc-500">Loading agents...</span>
       </div>
     );
   }
@@ -124,41 +124,41 @@ export default function AgentsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">Agent Management</h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <h2 className="text-lg font-semibold text-white">Agent Management</h2>
+          <p className="text-sm text-zinc-500 mt-0.5">
             Configure research agents for each pipeline stage.
           </p>
         </div>
-        <span className="text-sm text-slate-400">
+        <span className="text-sm text-zinc-600">
           {agents.length} agent{agents.length !== 1 ? "s" : ""} total
         </span>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="bg-red-950/50 border border-red-800/50 rounded-lg p-4">
+          <p className="text-sm text-red-400">{error}</p>
         </div>
       )}
 
       {/* Stages */}
       {stages.map((stageNum) => (
-        <div key={stageNum} className="bg-white rounded-xl border border-slate-200 p-5">
+        <div key={stageNum} className="bg-zinc-900 rounded-xl border border-zinc-800 p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-indigo-950/60 text-indigo-400 text-xs font-bold">
                 {stageNum}
               </span>
-              <h3 className="text-sm font-semibold text-slate-800">
+              <h3 className="text-sm font-semibold text-zinc-200">
                 {STAGE_NAMES[stageNum]}
               </h3>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-zinc-600">
                 {agentsByStage[stageNum].length} agent
                 {agentsByStage[stageNum].length !== 1 ? "s" : ""}
               </span>
             </div>
             <button
               onClick={() => handleCreate(stageNum)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors border border-indigo-200"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-400 hover:bg-indigo-950/30 rounded-md transition-colors border border-indigo-800/40"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -168,7 +168,7 @@ export default function AgentsPage() {
           </div>
 
           {agentsByStage[stageNum].length === 0 ? (
-            <p className="text-xs text-slate-400 text-center py-4">
+            <p className="text-xs text-zinc-600 text-center py-4">
               No agents configured for this stage.
             </p>
           ) : (
@@ -192,11 +192,11 @@ export default function AgentsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={handleCancel}
           />
           {/* Modal */}
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-xl border border-slate-200 p-6 mx-4">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-zinc-900 rounded-2xl shadow-xl border border-zinc-800 p-6 mx-4">
             <AgentConfigForm
               agent={
                 editingAgent

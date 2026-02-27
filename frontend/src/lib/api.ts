@@ -18,8 +18,10 @@ export const api = {
   // Projects
   listProjects: () => apiFetch<Project[]>("/api/projects"),
   getProject: (id: string) => apiFetch<Project>(`/api/projects/${id}`),
-  createProject: (data: { name: string; research_question: string; context?: string }) =>
+  createProject: (data: { name: string; research_question: string; context?: string; folder?: string }) =>
     apiFetch<Project>("/api/projects", { method: "POST", body: JSON.stringify(data) }),
+  updateProject: (id: string, data: { name?: string; research_question?: string; context?: string; folder?: string }) =>
+    apiFetch<{ ok: boolean }>(`/api/projects/${id}`, { method: "PUT", body: JSON.stringify(data) }),
   deleteProject: (id: string) =>
     apiFetch<{ ok: boolean }>(`/api/projects/${id}`, { method: "DELETE" }),
 

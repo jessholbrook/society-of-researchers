@@ -73,7 +73,6 @@ export default function StageDetailPage() {
           next.add(data.agent_id);
           return next;
         });
-        // Add a placeholder output
         setStageResult((prev) => {
           if (!prev) {
             return {
@@ -170,23 +169,17 @@ export default function StageDetailPage() {
           };
         });
       },
-      onConflictStart: () => {
-        // Conflict analysis is starting - could show a loading state
-      },
+      onConflictStart: () => {},
       onConflictComplete: (data) => {
         setStageResult((prev) => {
           if (!prev) return prev;
-          return {
-            ...prev,
-            conflict_report: data,
-          };
+          return { ...prev, conflict_report: data };
         });
         setActiveTab("debate");
       },
       onStageComplete: (data) => {
         setIsRunning(false);
         setStreamingAgents(new Set());
-        // Refresh full data
         fetchData();
       },
       onError: (err) => {
@@ -217,7 +210,6 @@ export default function StageDetailPage() {
     try {
       const result = await api.approveStage(projectId, stageNum);
       if (result.complete) {
-        // Final stage — navigate to report page
         router.push(`/projects/${projectId}/report`);
       } else if (result.next_stage) {
         router.push(`/projects/${projectId}/stages/${result.next_stage}`);
@@ -233,8 +225,8 @@ export default function StageDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-        <span className="ml-3 text-sm text-slate-500">Loading stage data...</span>
+        <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+        <span className="ml-3 text-sm text-zinc-500">Loading stage data...</span>
       </div>
     );
   }
@@ -256,36 +248,36 @@ export default function StageDetailPage() {
   return (
     <div className="space-y-6">
       {/* Stage header */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5">
+      <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-5">
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">
+              <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">
                 Stage {stageNum}
               </span>
               <span
                 className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${
                   stageStatus === "running"
-                    ? "bg-amber-100 text-amber-700 animate-status-pulse"
+                    ? "bg-amber-950/60 text-amber-400 animate-status-pulse"
                     : stageStatus === "complete"
-                    ? "bg-blue-100 text-blue-700"
+                    ? "bg-blue-950/60 text-blue-400"
                     : stageStatus === "approved"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-slate-100 text-slate-500"
+                    ? "bg-emerald-950/60 text-emerald-400"
+                    : "bg-zinc-800 text-zinc-500"
                 }`}
               >
                 {stageStatus.charAt(0).toUpperCase() + stageStatus.slice(1)}
               </span>
             </div>
-            <h2 className="text-lg font-semibold text-slate-900 mb-1">{stageName}</h2>
-            <p className="text-sm text-slate-500">{stageDescription}</p>
+            <h2 className="text-lg font-semibold text-white mb-1">{stageName}</h2>
+            <p className="text-sm text-zinc-500">{stageDescription}</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0 ml-4">
             {canRun && (
               <button
                 onClick={handleRunStage}
                 disabled={isRunning}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isRunning ? (
                   <>
@@ -294,12 +286,7 @@ export default function StageDetailPage() {
                   </>
                 ) : (
                   <>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -321,7 +308,7 @@ export default function StageDetailPage() {
             {stageStatus === "approved" && stageNum === 6 && (
               <button
                 onClick={() => router.push(`/projects/${projectId}/report`)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-500 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -330,14 +317,9 @@ export default function StageDetailPage() {
               </button>
             )}
             {stageStatus === "approved" && stageNum < 6 && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium border border-green-200">
+              <span className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-950/50 text-emerald-400 rounded-lg text-sm font-medium border border-emerald-800/50">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 Approved
               </span>
@@ -348,14 +330,14 @@ export default function StageDetailPage() {
 
       {/* Error */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="bg-red-950/50 border border-red-800/50 rounded-lg p-4">
+          <p className="text-sm text-red-400">{error}</p>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="border-b border-slate-200">
+      <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
+        <div className="border-b border-zinc-800">
           <nav className="flex">
             {tabs.map((tab) => (
               <button
@@ -363,13 +345,13 @@ export default function StageDetailPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === tab.id
-                    ? "border-indigo-600 text-indigo-600"
-                    : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                    ? "border-indigo-500 text-indigo-400"
+                    : "border-transparent text-zinc-500 hover:text-zinc-300 hover:border-zinc-700"
                 }`}
               >
                 {tab.label}
                 {tab.count !== undefined && tab.count > 0 && (
-                  <span className="ml-1.5 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600">
+                  <span className="ml-1.5 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-zinc-800 text-zinc-400">
                     {tab.count}
                   </span>
                 )}
@@ -385,7 +367,7 @@ export default function StageDetailPage() {
               {agentOutputs.length === 0 && !isRunning && (
                 <div className="text-center py-12">
                   <svg
-                    className="w-10 h-10 text-slate-300 mx-auto mb-3"
+                    className="w-10 h-10 text-zinc-700 mx-auto mb-3"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -397,8 +379,8 @@ export default function StageDetailPage() {
                       d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
                     />
                   </svg>
-                  <p className="text-sm text-slate-500 mb-1">No agent outputs yet</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm text-zinc-500 mb-1">No agent outputs yet</p>
+                  <p className="text-xs text-zinc-600">
                     Click &quot;Run Stage&quot; to execute this pipeline stage.
                   </p>
                 </div>
@@ -423,7 +405,7 @@ export default function StageDetailPage() {
               ) : (
                 <div className="text-center py-12">
                   <svg
-                    className="w-10 h-10 text-slate-300 mx-auto mb-3"
+                    className="w-10 h-10 text-zinc-700 mx-auto mb-3"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -435,8 +417,8 @@ export default function StageDetailPage() {
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     />
                   </svg>
-                  <p className="text-sm text-slate-500 mb-1">No debate analysis yet</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm text-zinc-500 mb-1">No debate analysis yet</p>
+                  <p className="text-xs text-zinc-600">
                     Conflict analysis runs automatically after all agents complete.
                   </p>
                 </div>
@@ -448,10 +430,10 @@ export default function StageDetailPage() {
           {activeTab === "override" && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                   Override Content
                 </label>
-                <p className="text-xs text-slate-400 mb-2">
+                <p className="text-xs text-zinc-600 mb-2">
                   Provide your own synthesis or corrections to the agent outputs.
                   This will be used as the authoritative output for this stage.
                 </p>
@@ -460,26 +442,26 @@ export default function StageDetailPage() {
                   onChange={(e) => setOverrideContent(e.target.value)}
                   placeholder="Write your override content here..."
                   rows={10}
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-y font-mono leading-relaxed"
+                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 rounded-lg text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-y font-mono leading-relaxed"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                   Notes
-                  <span className="font-normal text-slate-400 ml-1">(optional)</span>
+                  <span className="font-normal text-zinc-600 ml-1">(optional)</span>
                 </label>
                 <textarea
                   value={overrideNotes}
                   onChange={(e) => setOverrideNotes(e.target.value)}
                   placeholder="Why are you overriding? What did the agents miss?"
                   rows={3}
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-y"
+                  className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 rounded-lg text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-y"
                 />
               </div>
               <button
                 onClick={handleSaveOverride}
                 disabled={!overrideContent.trim() || savingOverride}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {savingOverride && (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -487,7 +469,7 @@ export default function StageDetailPage() {
                 {savingOverride ? "Saving..." : "Save Override"}
               </button>
               {stageResult?.human_override && (
-                <p className="text-xs text-green-600">
+                <p className="text-xs text-emerald-400">
                   Override saved. This will be used as the stage output.
                 </p>
               )}
@@ -498,13 +480,13 @@ export default function StageDetailPage() {
 
       {/* Approve & Advance */}
       {canApprove && (
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-5">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-slate-700 mb-0.5">
+              <h3 className="text-sm font-semibold text-zinc-300 mb-0.5">
                 {stageNum === 6 ? "Research complete!" : "Ready to advance?"}
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-zinc-600">
                 {stageNum === 6
                   ? "Approve the final stage to generate a comprehensive research report."
                   : "Approve this stage to lock results and move to the next stage."}
@@ -513,10 +495,10 @@ export default function StageDetailPage() {
             <button
               onClick={handleApprove}
               disabled={approving}
-              className={`inline-flex items-center gap-2 px-5 py-2.5 text-white rounded-lg text-sm font-medium transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`inline-flex items-center gap-2 px-5 py-2.5 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                 stageNum === 6
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : "bg-green-600 hover:bg-green-700"
+                  ? "bg-indigo-600 hover:bg-indigo-500"
+                  : "bg-emerald-600 hover:bg-emerald-500"
               }`}
             >
               {approving ? (
@@ -526,26 +508,11 @@ export default function StageDetailPage() {
                 </>
               ) : (
                 <>
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     {stageNum === 6 ? (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     ) : (
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     )}
                   </svg>
                   {stageNum === 6 ? "Complete & Generate Report" : "Approve & Advance"}

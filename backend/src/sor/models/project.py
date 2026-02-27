@@ -28,6 +28,7 @@ class Project(BaseModel):
     name: str
     research_question: str
     context: str = ""
+    folder: str = ""
     state: ProjectState = ProjectState.DRAFT
     current_stage: int = 1
     stage_results: list[StageResult] = Field(default_factory=list)

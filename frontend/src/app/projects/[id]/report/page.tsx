@@ -62,12 +62,12 @@ export default function ReportPage() {
   return (
     <div className="space-y-6 pb-12">
       {/* Hero header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-8 text-white shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-6 lg:p-8 text-white shadow-lg">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE4YzMuMzE0IDAgNiAyLjY4NiA2IDZzLTIuNjg2IDYtNiA2LTYtMi42ODYtNi02IDIuNjg2LTYgNi02eiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
         <div className="relative">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2.5 mb-3">
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2.5 mb-3 flex-wrap">
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-xs font-semibold tracking-wide uppercase">
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -90,7 +90,7 @@ export default function ReportPage() {
                 {project?.research_question}
               </p>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0 ml-6">
+            <div className="flex items-center gap-2 flex-shrink-0">
               <button
                 onClick={() => router.push(`/projects/${projectId}`)}
                 className="inline-flex items-center gap-2 px-3.5 py-2 bg-white/10 backdrop-blur-sm text-white/90 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors border border-white/10"
@@ -121,7 +121,7 @@ export default function ReportPage() {
 
           {/* Stats row */}
           {project && (
-            <div className="grid grid-cols-4 gap-3 mt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
               {[
                 { label: "Stages", value: `${approvedStages}/6`, sub: "approved" },
                 { label: "Agents", value: String(totalAgents), sub: "total outputs" },
@@ -142,7 +142,7 @@ export default function ReportPage() {
 
       {/* Pipeline stages — compact horizontal */}
       {project && (
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           {[1, 2, 3, 4, 5, 6].map((num) => {
             const sr = project.stage_results.find((s) => s.stage_number === num);
             const agentCount = sr?.agent_outputs?.length ?? 0;
@@ -152,36 +152,35 @@ export default function ReportPage() {
               <button
                 key={num}
                 onClick={() => router.push(`/projects/${projectId}/stages/${num}`)}
-                className={`group relative text-left p-3 rounded-xl border-2 transition-all hover:shadow-md ${
+                className={`group relative text-left p-3 rounded-xl border transition-all hover:bg-zinc-800/80 ${
                   isApproved
-                    ? "border-emerald-200 bg-emerald-50/60 hover:border-emerald-300"
-                    : "border-slate-200 bg-white hover:border-slate-300"
+                    ? "border-emerald-800/40 bg-emerald-950/20"
+                    : "border-zinc-800 bg-zinc-900 hover:border-zinc-700"
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                    isApproved ? "text-emerald-600" : "text-slate-400"
+                    isApproved ? "text-emerald-400" : "text-zinc-600"
                   }`}>
                     Stage {num}
                   </span>
                   {isApproved && (
-                    <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-3.5 h-3.5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                   )}
                 </div>
-                <p className="text-xs font-semibold text-slate-800 truncate leading-tight">
+                <p className="text-xs font-semibold text-zinc-300 truncate leading-tight">
                   {STAGE_NAMES[num]}
                 </p>
                 <div className="flex items-center gap-1.5 mt-1.5">
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[10px] text-zinc-600">
                     {agentCount} output{agentCount !== 1 ? "s" : ""}
                   </span>
                   {hasOverride && (
                     <span className="text-[10px] text-amber-500 font-medium">+ edited</span>
                   )}
                 </div>
-                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-b from-transparent to-slate-50/50 pointer-events-none" />
               </button>
             );
           })}
@@ -190,38 +189,38 @@ export default function ReportPage() {
 
       {/* Error */}
       {error && (
-        <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="flex items-start gap-3 bg-red-950/50 border border-red-800/50 rounded-xl p-4">
           <svg className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <p className="text-sm font-medium text-red-800">Report generation failed</p>
-            <p className="text-sm text-red-600 mt-0.5">{error}</p>
+            <p className="text-sm font-medium text-red-300">Report generation failed</p>
+            <p className="text-sm text-red-400 mt-0.5">{error}</p>
           </div>
         </div>
       )}
 
       {/* Loading / Generating */}
       {(loading || generating) && !report && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-16 text-center shadow-sm">
+        <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-16 text-center">
           <div className="relative w-16 h-16 mx-auto mb-6">
-            <div className="absolute inset-0 rounded-full border-4 border-indigo-100" />
-            <div className="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin" />
-            <div className="absolute inset-3 rounded-full bg-indigo-50 flex items-center justify-center">
-              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="absolute inset-0 rounded-full border-4 border-zinc-800" />
+            <div className="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin" />
+            <div className="absolute inset-3 rounded-full bg-zinc-900 flex items-center justify-center">
+              <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
           </div>
-          <p className="text-base font-semibold text-slate-800 mb-1">Generating Research Report</p>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">
+          <p className="text-base font-semibold text-zinc-200 mb-1">Generating Research Report</p>
+          <p className="text-sm text-zinc-500 max-w-sm mx-auto">
             Synthesizing findings from {totalAgents} agent outputs across all 6 stages...
           </p>
           <div className="flex justify-center gap-1 mt-6">
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce"
+                className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce"
                 style={{ animationDelay: `${i * 150}ms` }}
               />
             ))}
@@ -231,20 +230,20 @@ export default function ReportPage() {
 
       {/* Report content */}
       {report && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
           {/* Report inner header */}
-          <div className="px-10 pt-8 pb-6 border-b border-slate-100 bg-gradient-to-b from-slate-50/80 to-white">
-            <div className="flex items-center gap-3 text-xs text-slate-400">
-              <span className="font-medium">Society of Researchers</span>
-              <span className="w-1 h-1 rounded-full bg-slate-300" />
+          <div className="px-6 lg:px-10 pt-8 pb-6 border-b border-zinc-800">
+            <div className="flex items-center gap-3 text-xs text-zinc-600">
+              <span className="font-medium text-zinc-500">Society of Researchers</span>
+              <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span>Multi-Agent Research Report</span>
-              <span className="w-1 h-1 rounded-full bg-slate-300" />
+              <span className="w-1 h-1 rounded-full bg-zinc-700" />
               <span>{new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
             </div>
           </div>
 
           {/* Report body */}
-          <div className="px-10 py-10">
+          <div className="px-6 lg:px-10 py-10">
             <div
               className="report-content"
               dangerouslySetInnerHTML={{ __html: markdownToHtml(report) }}
@@ -252,8 +251,8 @@ export default function ReportPage() {
           </div>
 
           {/* Report footer */}
-          <div className="px-10 py-5 border-t border-slate-100 bg-slate-50/50">
-            <div className="flex items-center justify-between text-xs text-slate-400">
+          <div className="px-6 lg:px-10 py-5 border-t border-zinc-800 bg-zinc-950/50">
+            <div className="flex items-center justify-between text-xs text-zinc-600">
               <span>
                 Generated from {approvedStages} stages, {totalAgents} agent outputs,{" "}
                 {totalAgreements} agreements, {totalDisagreements} tensions
@@ -261,7 +260,7 @@ export default function ReportPage() {
               <button
                 onClick={generateReport}
                 disabled={generating}
-                className="inline-flex items-center gap-1.5 text-indigo-500 hover:text-indigo-700 font-medium transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-medium transition-colors disabled:opacity-50"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -283,11 +282,11 @@ export default function ReportPage() {
         .report-content h1 {
           font-size: 1.6rem;
           font-weight: 700;
-          color: #0f172a;
+          color: #f4f4f5;
           margin-top: 3rem;
           margin-bottom: 1.25rem;
           padding-bottom: 0.75rem;
-          border-bottom: 2px solid #e2e8f0;
+          border-bottom: 1px solid #27272a;
           line-height: 1.25;
           letter-spacing: -0.01em;
         }
@@ -298,11 +297,11 @@ export default function ReportPage() {
         .report-content h2 {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #1e293b;
+          color: #e4e4e7;
           margin-top: 2.5rem;
           margin-bottom: 1rem;
           padding-bottom: 0.5rem;
-          border-bottom: 1px solid #f1f5f9;
+          border-bottom: 1px solid #18181b;
           line-height: 1.3;
           letter-spacing: -0.005em;
         }
@@ -310,7 +309,7 @@ export default function ReportPage() {
         .report-content h3 {
           font-size: 1.05rem;
           font-weight: 600;
-          color: #334155;
+          color: #d4d4d8;
           margin-top: 2rem;
           margin-bottom: 0.6rem;
           line-height: 1.4;
@@ -318,18 +317,18 @@ export default function ReportPage() {
 
         .report-content p {
           font-size: 0.925rem;
-          color: #475569;
+          color: #a1a1aa;
           line-height: 1.8;
           margin-bottom: 1.15rem;
         }
 
         .report-content strong {
-          color: #1e293b;
+          color: #e4e4e7;
           font-weight: 600;
         }
 
         .report-content em {
-          color: #64748b;
+          color: #71717a;
           font-style: italic;
         }
 
@@ -358,7 +357,7 @@ export default function ReportPage() {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #a5b4fc;
+          background: #6366f1;
         }
 
         .report-content ol {
@@ -371,59 +370,59 @@ export default function ReportPage() {
         }
 
         .report-content ol > li::marker {
-          color: #6366f1;
+          color: #818cf8;
           font-weight: 600;
           font-size: 0.9rem;
         }
 
         .report-content li {
           font-size: 0.925rem;
-          color: #475569;
+          color: #a1a1aa;
           line-height: 1.75;
           margin-bottom: 0.5rem;
         }
 
         .report-content li strong {
-          color: #1e293b;
+          color: #e4e4e7;
         }
 
         .report-content hr {
           border: none;
           height: 1px;
-          background: linear-gradient(to right, transparent, #cbd5e1, transparent);
+          background: linear-gradient(to right, transparent, #3f3f46, transparent);
           margin: 2.5rem 0;
         }
 
         .report-content a {
-          color: #4f46e5;
+          color: #818cf8;
           text-decoration: none;
           font-weight: 500;
-          border-bottom: 1px solid #c7d2fe;
+          border-bottom: 1px solid #4338ca;
           transition: border-color 0.15s;
         }
         .report-content a:hover {
-          border-bottom-color: #4f46e5;
+          border-bottom-color: #818cf8;
         }
 
         .report-content blockquote {
-          border-left: 3px solid #a5b4fc;
-          background: #f8fafc;
+          border-left: 3px solid #6366f1;
+          background: #18181b;
           padding: 0.75rem 1.25rem;
           margin: 1.25rem 0;
           border-radius: 0 0.5rem 0.5rem 0;
         }
         .report-content blockquote p {
-          color: #64748b;
+          color: #71717a;
           font-style: italic;
           margin-bottom: 0;
         }
 
         .report-content code {
-          background: #f1f5f9;
+          background: #18181b;
           padding: 0.15em 0.4em;
           border-radius: 4px;
           font-size: 0.85em;
-          color: #334155;
+          color: #a1a1aa;
           font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
         }
       `}</style>
