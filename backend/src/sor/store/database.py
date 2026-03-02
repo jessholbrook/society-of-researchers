@@ -99,6 +99,56 @@ class Database:
             columns = {row[1] for row in await cursor.fetchall()}
             if "folder" not in columns:
                 await db.execute("ALTER TABLE projects ADD COLUMN folder TEXT DEFAULT ''")
+
+            # Migrate: seed new surprise-focused agents if missing
+            cursor = await db.execute(
+                "SELECT id FROM agents WHERE id = 'assumption-breaker' AND project_id IS NULL"
+            )
+            if not await cursor.fetchone():
+                from ..engine.defaults import DEFAULT_AGENTS
+
+                surprise_ids = {
+                    'assumption-breaker', 'outlier-hunter', 'pattern-breaker',
+                    'surprise-synthesizer', 'revelation-writer', 'wild-card',
+                }
+                surprise_agents = [a for a in DEFAULT_AGENTS if a.id in surprise_ids]
+
+                # Check if any global agents exist (i.e. this isn't a fresh DB)
+                existing_cursor = await db.execute(
+                    "SELECT COUNT(*) FROM agents WHERE project_id IS NULL"
+                )
+                (existing_count,) = await existing_cursor.fetchone()
+
+                if existing_count > 0:
+                    # Seed as global defaults
+                    for agent in surprise_agents:
+                        await db.execute(
+                            "INSERT INTO agents (id, name, role, perspective, system_prompt, "
+                            "stage, temperature, model, conflict_partners, enabled, project_id) "
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            (agent.id, agent.name, agent.role, agent.perspective,
+                             agent.system_prompt, agent.stage, agent.temperature,
+                             agent.model, json.dumps(agent.conflict_partners),
+                             int(agent.enabled), None),
+                        )
+
+                    # Clone into all existing projects
+                    proj_cursor = await db.execute("SELECT id FROM projects")
+                    projects = await proj_cursor.fetchall()
+                    for (project_id,) in projects:
+                        for agent in surprise_agents:
+                            clone_id = f"{agent.id}-{project_id[:6]}"
+                            await db.execute(
+                                "INSERT OR IGNORE INTO agents "
+                                "(id, name, role, perspective, system_prompt, "
+                                "stage, temperature, model, conflict_partners, enabled, project_id) "
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                (clone_id, agent.name, agent.role, agent.perspective,
+                                 agent.system_prompt, agent.stage, agent.temperature,
+                                 agent.model, json.dumps(agent.conflict_partners),
+                                 int(agent.enabled), project_id),
+                            )
+
             await db.commit()
 
     def _connect(self) -> aiosqlite.Connection:
