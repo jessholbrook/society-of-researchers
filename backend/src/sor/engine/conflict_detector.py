@@ -6,8 +6,12 @@ identifying agreements, disagreements, unresolved tensions, and a synthesis.
 
 from __future__ import annotations
 
+import logging
+
 from ..models import AgentOutput, ConflictReport
 from .llm_client import LLMClient, LLMError
+
+logger = logging.getLogger(__name__)
 
 CONFLICT_DETECTION_PROMPT = """\
 You are an expert research conflict analyst. Your PRIMARY job is to surface \
@@ -119,8 +123,10 @@ async def detect_conflicts(
             user_message=user_message,
             temperature=0.0,
         )
-    except LLMError:
-        # If JSON parsing fails, return a minimal report rather than crashing
+    except LLMError as exc:
+        # If JSON parsing fails, log the details so the issue is debuggable,
+        # then return a minimal report rather than crashing.
+        logger.error("Conflict detection failed for stage %s: %s", stage, exc)
         return ConflictReport(
             stage=stage,
             synthesis="Conflict detection failed: unable to parse LLM response.",

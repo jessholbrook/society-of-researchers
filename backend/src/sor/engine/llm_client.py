@@ -7,6 +7,7 @@ import json
 import re
 
 import httpx
+from json_repair import repair_json
 
 MAX_RETRIES = 5
 INITIAL_BACKOFF = 2.0  # seconds
@@ -15,7 +16,7 @@ INITIAL_BACKOFF = 2.0  # seconds
 class LLMClient:
     """Thin async wrapper around the Anthropic Messages API."""
 
-    def __init__(self, api_key: str, default_model: str = "claude-sonnet-4-20250514"):
+    def __init__(self, api_key: str, default_model: str = "claude-sonnet-4-6"):
         self._api_key = api_key
         self._default_model = default_model
         self._client = httpx.AsyncClient(
@@ -130,10 +131,22 @@ class LLMClient:
 
         try:
             return json.loads(text)
-        except json.JSONDecodeError as exc:
-            raise LLMError(
-                f"Failed to parse JSON from LLM response: {exc}\n\nRaw response:\n{raw[:500]}"
-            ) from exc
+        except json.JSONDecodeError:
+            # Extract the outermost { ... } block in case the model added a
+            # preamble or suffix around the JSON.
+            start = text.find("{")
+            end = text.rfind("}")
+            candidate = text[start : end + 1] if start != -1 and end != -1 and end > start else text
+
+            # Last resort: use json_repair to fix common LLM JSON mistakes
+            # (trailing commas, missing commas, unescaped quotes, etc.).
+            try:
+                repaired = repair_json(candidate)
+                return json.loads(repaired)
+            except (json.JSONDecodeError, ValueError) as exc:
+                raise LLMError(
+                    f"Failed to parse JSON from LLM response even after repair: {exc}\n\nRaw response:\n{raw[:2000]}"
+                ) from exc
 
     async def close(self) -> None:
         """Close the underlying httpx client."""
