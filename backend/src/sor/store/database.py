@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS agents (
     system_prompt TEXT NOT NULL,
     stage INTEGER NOT NULL,
     temperature REAL DEFAULT 0.7,
-    model TEXT DEFAULT 'claude-sonnet-4-20250514',
+    model TEXT DEFAULT 'claude-sonnet-4-6',
     conflict_partners TEXT DEFAULT '[]',
     enabled INTEGER DEFAULT 1,
     project_id TEXT,

@@ -29,7 +29,7 @@ class AgentConfig(BaseModel):
     system_prompt: str
     stage: int
     temperature: float = 0.7
-    model: str = "claude-sonnet-4-20250514"
+    model: str = "claude-sonnet-4-6"
     conflict_partners: list[str] = Field(default_factory=list)
     enabled: bool = True
     project_id: str | None = None

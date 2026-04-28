@@ -1,5 +1,7 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { AgentOutput } from "@/lib/types";
 
 interface AgentOutputCardProps {
@@ -79,8 +81,27 @@ export function AgentOutputCard({ output, isStreaming }: AgentOutputCardProps) {
 
       {/* Content */}
       {output.content && (
-        <div className="mt-3 text-sm text-zinc-400 whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
-          {output.content}
+        <div className="mt-3 text-sm text-zinc-400 leading-relaxed max-h-96 overflow-y-auto">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1: (props) => <h1 className="text-base font-bold text-zinc-200 mt-4 mb-2" {...props} />,
+              h2: (props) => <h2 className="text-sm font-bold text-zinc-200 mt-3 mb-1.5" {...props} />,
+              h3: (props) => <h3 className="text-sm font-semibold text-zinc-200 mt-2 mb-1" {...props} />,
+              p: (props) => <p className="mb-2" {...props} />,
+              ul: (props) => <ul className="list-disc ml-5 mb-2 space-y-1" {...props} />,
+              ol: (props) => <ol className="list-decimal ml-5 mb-2 space-y-1" {...props} />,
+              li: (props) => <li className="text-zinc-400" {...props} />,
+              strong: (props) => <strong className="font-semibold text-zinc-200" {...props} />,
+              em: (props) => <em className="italic text-zinc-300" {...props} />,
+              code: (props) => <code className="bg-zinc-900 px-1 py-0.5 rounded text-[12px] text-zinc-300" {...props} />,
+              hr: () => <hr className="my-3 border-zinc-800" />,
+              blockquote: (props) => <blockquote className="border-l-2 border-zinc-700 pl-3 text-zinc-500 italic my-2" {...props} />,
+              a: (props) => <a className="text-indigo-400 underline hover:text-indigo-300" target="_blank" rel="noreferrer" {...props} />,
+            }}
+          >
+            {output.content}
+          </ReactMarkdown>
         </div>
       )}
 
