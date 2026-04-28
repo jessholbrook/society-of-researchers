@@ -3,9 +3,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { ChevronRight, Loader2, Users } from "lucide-react";
 import { api } from "@/lib/api";
 import type { Project } from "@/lib/types";
 import { PipelineCanvas } from "@/components/pipeline/PipelineCanvas";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function ProjectLayout({ children }: { children: React.ReactNode }) {
   const params = useParams();
@@ -19,8 +22,9 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
       const data = await api.getProject(projectId);
       setProject(data);
       setError(null);
-    } catch (err: any) {
-      setError(err.message || "Failed to load project");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to load project";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -32,9 +36,9 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-32">
-        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-        <span className="ml-3 text-sm text-zinc-500">Loading project...</span>
+      <div className="flex items-center justify-center py-32 text-muted-foreground">
+        <Loader2 className="size-5 animate-spin" />
+        <span className="ml-3 text-sm">Loading project…</span>
       </div>
     );
   }
@@ -42,62 +46,50 @@ export default function ProjectLayout({ children }: { children: React.ReactNode 
   if (error || !project) {
     return (
       <div className="p-6 lg:p-8 max-w-4xl mx-auto">
-        <div className="bg-red-950/50 border border-red-800/50 rounded-lg p-6 text-center">
-          <p className="text-sm text-red-400 mb-4">{error || "Project not found"}</p>
-          <Link
-            href="/"
-            className="text-sm font-medium text-indigo-400 hover:text-indigo-300"
-          >
-            Back to Projects
-          </Link>
-        </div>
+        <Card className="border-destructive/40 bg-destructive/10">
+          <CardContent className="text-center py-6 space-y-4">
+            <p className="text-sm text-destructive">{error || "Project not found"}</p>
+            <Button asChild variant="link">
+              <Link href="/">Back to Projects</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="p-4 lg:p-8 max-w-7xl mx-auto">
-      {/* Breadcrumb & Title */}
       <div className="mb-6">
-        <nav className="flex items-center gap-2 text-sm text-zinc-500 mb-3">
-          <Link href="/" className="hover:text-indigo-400 transition-colors">
+        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
+          <Link href="/" className="hover:text-foreground transition-colors">
             Projects
           </Link>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          <span className="text-zinc-200 font-medium">{project.name}</span>
+          <ChevronRight className="size-3.5" />
+          <span className="text-foreground font-medium">{project.name}</span>
         </nav>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-white">{project.name}</h1>
-            <p className="text-sm text-zinc-500 mt-0.5">{project.research_question}</p>
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold tracking-tight truncate">
+              {project.name}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5 truncate">
+              {project.research_question}
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href={`/projects/${project.id}/agents`}
-              className="inline-flex items-center gap-2 px-3.5 py-2 border border-zinc-700 rounded-lg text-sm font-medium text-zinc-300 hover:bg-zinc-800 hover:border-zinc-600 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
+          <Button asChild variant="outline" size="lg">
+            <Link href={`/projects/${project.id}/agents`}>
+              <Users />
               Manage Agents
             </Link>
-          </div>
+          </Button>
         </div>
       </div>
 
-      {/* Pipeline Canvas */}
       <div className="mb-6">
         <PipelineCanvas project={project} />
       </div>
 
-      {/* Page content */}
       {children}
     </div>
   );

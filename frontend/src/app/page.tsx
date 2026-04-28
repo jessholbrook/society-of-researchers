@@ -2,27 +2,47 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ChevronRight, FolderPlus, Loader2, Plus } from "lucide-react";
 import { api } from "@/lib/api";
 import type { Project, ProjectState } from "@/lib/types";
 import { STAGE_NAMES } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+const STATE_BADGE: Record<
+  ProjectState,
+  { label: string; className: string }
+> = {
+  draft: {
+    label: "Draft",
+    className: "bg-muted text-muted-foreground border-border",
+  },
+  in_progress: {
+    label: "In Progress",
+    className:
+      "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  },
+  complete: {
+    label: "Complete",
+    className:
+      "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  },
+};
 
 function StatusBadge({ state }: { state: ProjectState }) {
-  const styles: Record<ProjectState, string> = {
-    draft: "bg-zinc-800 text-zinc-400 border-zinc-700",
-    in_progress: "bg-amber-950/50 text-amber-400 border-amber-800/50",
-    complete: "bg-emerald-950/50 text-emerald-400 border-emerald-800/50",
-  };
-  const labels: Record<ProjectState, string> = {
-    draft: "Draft",
-    in_progress: "In Progress",
-    complete: "Complete",
-  };
+  const { label, className } = STATE_BADGE[state];
   return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${styles[state]}`}
-    >
-      {labels[state]}
-    </span>
+    <Badge variant="outline" className={className}>
+      {label}
+    </Badge>
   );
 }
 
@@ -41,99 +61,86 @@ export default function HomePage() {
 
   return (
     <div className="p-6 lg:p-8 max-w-6xl mx-auto">
-      {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Projects</h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <h1 className="text-2xl font-semibold tracking-tight">Projects</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Manage your multi-agent research projects
           </p>
         </div>
-        <Link
-          href="/projects/new"
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-500 transition-colors"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          New Project
-        </Link>
+        <Button asChild size="lg">
+          <Link href="/projects/new">
+            <Plus />
+            New Project
+          </Link>
+        </Button>
       </div>
 
-      {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center py-20">
-          <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <span className="ml-3 text-sm text-zinc-500">Loading projects...</span>
+        <div className="flex items-center justify-center py-20 text-muted-foreground">
+          <Loader2 className="size-5 animate-spin" />
+          <span className="ml-3 text-sm">Loading projects…</span>
         </div>
       )}
 
-      {/* Error */}
       {error && (
-        <div className="bg-red-950/50 border border-red-800/50 rounded-lg p-4 mb-6">
-          <p className="text-sm text-red-400">{error}</p>
-        </div>
+        <Card className="border-destructive/40 bg-destructive/10 mb-6">
+          <CardContent className="py-3 text-sm text-destructive">
+            {error}
+          </CardContent>
+        </Card>
       )}
 
-      {/* Empty state */}
       {!loading && !error && projects.length === 0 && (
-        <div className="text-center py-20 bg-zinc-900 rounded-xl border border-zinc-800">
-          <svg
-            className="w-12 h-12 text-zinc-700 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-            />
-          </svg>
-          <h3 className="text-lg font-medium text-zinc-300 mb-1">No projects yet</h3>
-          <p className="text-sm text-zinc-500 mb-6">
-            Create your first research project to get started.
-          </p>
-          <Link
-            href="/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-500 transition-colors"
-          >
-            Create Project
-          </Link>
-        </div>
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center text-center py-16">
+            <FolderPlus className="size-10 text-muted-foreground mb-4" />
+            <h3 className="text-base font-medium mb-1">No projects yet</h3>
+            <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+              Create your first research project to get started.
+            </p>
+            <Button asChild>
+              <Link href="/projects/new">
+                <Plus />
+                Create Project
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Project cards */}
       {!loading && projects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
             <Link
               key={project.id}
               href={`/projects/${project.id}`}
-              className="block bg-zinc-900 rounded-xl border border-zinc-800 p-5 hover:border-zinc-700 hover:bg-zinc-900/80 transition-all group"
+              className="group focus-visible:outline-none"
             >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-base font-semibold text-white group-hover:text-indigo-400 transition-colors leading-snug">
-                  {project.name}
-                </h3>
-                <StatusBadge state={project.state} />
-              </div>
-              <p className="text-sm text-zinc-400 line-clamp-2 mb-4">
-                {project.research_question}
-              </p>
-              <div className="flex items-center justify-between text-xs text-zinc-600">
-                <span className="flex items-center gap-1.5">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                  Stage {project.current_stage}:{" "}
-                  {STAGE_NAMES[project.current_stage] || "Unknown"}
-                </span>
-                <span>
-                  {new Date(project.created_at).toLocaleDateString()}
-                </span>
-              </div>
+              <Card className="h-full transition-colors hover:border-primary/40 group-focus-visible:ring-2 group-focus-visible:ring-ring">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-3">
+                    <CardTitle className="text-base leading-snug group-hover:text-primary transition-colors">
+                      {project.name}
+                    </CardTitle>
+                    <StatusBadge state={project.state} />
+                  </div>
+                  <CardDescription className="line-clamp-2">
+                    {project.research_question}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent />
+                <CardFooter className="justify-between text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <ChevronRight className="size-3.5" />
+                    Stage {project.current_stage}:{" "}
+                    {STAGE_NAMES[project.current_stage] || "Unknown"}
+                  </span>
+                  <span>
+                    {new Date(project.created_at).toLocaleDateString()}
+                  </span>
+                </CardFooter>
+              </Card>
             </Link>
           ))}
         </div>

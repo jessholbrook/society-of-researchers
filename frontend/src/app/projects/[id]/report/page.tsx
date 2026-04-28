@@ -2,9 +2,20 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Check,
+  CircleAlert,
+  FileText,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
 import { api } from "@/lib/api";
 import type { Project } from "@/lib/types";
 import { STAGE_NAMES } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default function ReportPage() {
   const params = useParams();
@@ -18,7 +29,10 @@ export default function ReportPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    api.getProject(projectId).then(setProject).catch((err) => setError(err.message));
+    api
+      .getProject(projectId)
+      .then(setProject)
+      .catch((err) => setError(err.message));
   }, [projectId]);
 
   const generateReport = useCallback(async () => {
@@ -27,8 +41,9 @@ export default function ReportPage() {
     try {
       const result = await api.generateReport(projectId);
       setReport(result.report);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to generate report";
+      setError(message);
     } finally {
       setGenerating(false);
       setLoading(false);
@@ -39,108 +54,100 @@ export default function ReportPage() {
     generateReport();
   }, [generateReport]);
 
-  // Stats from project
-  const totalAgents = project?.stage_results.reduce(
-    (sum, sr) => sum + (sr.agent_outputs?.length ?? 0), 0
-  ) ?? 0;
-  const approvedStages = project?.stage_results.filter(
-    (sr) => sr.status === "approved"
-  ).length ?? 0;
-  const totalAgreements = project?.stage_results.reduce((sum, sr) => {
-    const cr = sr.conflict_report;
-    if (!cr) return sum;
-    const agreements = (cr as any).agreements ?? [];
-    return sum + agreements.length;
-  }, 0) ?? 0;
-  const totalDisagreements = project?.stage_results.reduce((sum, sr) => {
-    const cr = sr.conflict_report;
-    if (!cr) return sum;
-    const disagreements = (cr as any).disagreements ?? [];
-    return sum + disagreements.length;
-  }, 0) ?? 0;
+  const totalAgents =
+    project?.stage_results.reduce(
+      (sum, sr) => sum + (sr.agent_outputs?.length ?? 0),
+      0
+    ) ?? 0;
+  const approvedStages =
+    project?.stage_results.filter((sr) => sr.status === "approved").length ?? 0;
+  const totalAgreements =
+    project?.stage_results.reduce((sum, sr) => {
+      const cr = sr.conflict_report;
+      return cr ? sum + (cr.agreements?.length ?? 0) : sum;
+    }, 0) ?? 0;
+  const totalDisagreements =
+    project?.stage_results.reduce((sum, sr) => {
+      const cr = sr.conflict_report;
+      return cr ? sum + (cr.disagreements?.length ?? 0) : sum;
+    }, 0) ?? 0;
+
+  const stats = [
+    { label: "Stages", value: `${approvedStages}/6`, sub: "approved" },
+    { label: "Agents", value: String(totalAgents), sub: "total outputs" },
+    { label: "Agreements", value: String(totalAgreements), sub: "across stages" },
+    { label: "Tensions", value: String(totalDisagreements), sub: "identified" },
+  ];
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Hero header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-800 p-6 lg:p-8 text-white shadow-lg">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE4YzMuMzE0IDAgNiAyLjY4NiA2IDZzLTIuNjg2IDYtNiA2LTYtMi42ODYtNi02IDIuNjg2LTYgNi02eiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-        <div className="relative">
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background overflow-hidden">
+        <CardContent className="space-y-6 py-6 lg:py-8">
           <div className="flex items-start justify-between flex-wrap gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2.5 mb-3 flex-wrap">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-xs font-semibold tracking-wide uppercase">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold uppercase tracking-wide">
+                  <FileText className="size-3.5" />
                   Final Report
-                </div>
+                </span>
                 {project?.state === "complete" && (
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-xs font-semibold">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold border border-emerald-200">
+                    <Check className="size-3" />
                     Complete
-                  </div>
+                  </span>
                 )}
               </div>
-              <h1 className="text-2xl font-bold mb-2 leading-tight">
+              <h1 className="text-2xl font-semibold mb-2 leading-tight tracking-tight">
                 {project?.name || "Research Report"}
               </h1>
-              <p className="text-indigo-200 text-sm leading-relaxed max-w-2xl">
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
                 {project?.research_question}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <button
+              <Button
+                variant="outline"
+                size="lg"
                 onClick={() => router.push(`/projects/${projectId}`)}
-                className="inline-flex items-center gap-2 px-3.5 py-2 bg-white/10 backdrop-blur-sm text-white/90 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors border border-white/10"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
+                <ArrowLeft />
                 Project
-              </button>
+              </Button>
               {report && (
-                <button
-                  onClick={generateReport}
-                  disabled={generating}
-                  className="inline-flex items-center gap-2 px-3.5 py-2 bg-white text-indigo-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 transition-colors disabled:opacity-50 shadow-sm"
-                >
+                <Button onClick={generateReport} disabled={generating} size="lg">
                   {generating ? (
-                    <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                    <Loader2 className="animate-spin" />
                   ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
+                    <RefreshCw />
                   )}
                   Regenerate
-                </button>
+                </Button>
               )}
             </div>
           </div>
 
-          {/* Stats row */}
           {project && (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6">
-              {[
-                { label: "Stages", value: `${approvedStages}/6`, sub: "approved" },
-                { label: "Agents", value: String(totalAgents), sub: "total outputs" },
-                { label: "Agreements", value: String(totalAgreements), sub: "across stages" },
-                { label: "Tensions", value: String(totalDisagreements), sub: "identified" },
-              ].map((stat) => (
-                <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/10">
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-[11px] text-indigo-200 mt-0.5">
-                    <span className="font-medium text-white/80">{stat.label}</span> {stat.sub}
-                  </p>
-                </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {stats.map((stat) => (
+                <Card key={stat.label} className="bg-background/60 backdrop-blur-sm">
+                  <CardContent className="py-3">
+                    <p className="text-2xl font-semibold tracking-tight">
+                      {stat.value}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
+                      <span className="font-medium text-foreground/70">
+                        {stat.label}
+                      </span>{" "}
+                      {stat.sub}
+                    </p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Pipeline stages — compact horizontal */}
       {project && (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
           {[1, 2, 3, 4, 5, 6].map((num) => {
@@ -152,33 +159,35 @@ export default function ReportPage() {
               <button
                 key={num}
                 onClick={() => router.push(`/projects/${projectId}/stages/${num}`)}
-                className={`group relative text-left p-3 rounded-xl border transition-all hover:bg-zinc-800/80 ${
+                className={cn(
+                  "group relative text-left p-3 rounded-xl border transition-all hover:bg-accent/40",
                   isApproved
-                    ? "border-emerald-800/40 bg-emerald-950/20"
-                    : "border-zinc-800 bg-zinc-900 hover:border-zinc-700"
-                }`}
+                    ? "border-emerald-200 bg-emerald-50/60"
+                    : "border-border bg-background hover:border-foreground/20"
+                )}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${
-                    isApproved ? "text-emerald-400" : "text-zinc-600"
-                  }`}>
+                  <span
+                    className={cn(
+                      "text-[10px] font-bold uppercase tracking-wider",
+                      isApproved ? "text-emerald-700" : "text-muted-foreground"
+                    )}
+                  >
                     Stage {num}
                   </span>
                   {isApproved && (
-                    <svg className="w-3.5 h-3.5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
+                    <Check className="size-3.5 text-emerald-600" />
                   )}
                 </div>
-                <p className="text-xs font-semibold text-zinc-300 truncate leading-tight">
+                <p className="text-xs font-semibold truncate leading-tight">
                   {STAGE_NAMES[num]}
                 </p>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <span className="text-[10px] text-zinc-600">
+                <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-muted-foreground">
+                  <span>
                     {agentCount} output{agentCount !== 1 ? "s" : ""}
                   </span>
                   {hasOverride && (
-                    <span className="text-[10px] text-amber-500 font-medium">+ edited</span>
+                    <span className="text-amber-700 font-medium">+ edited</span>
                   )}
                 </div>
               </button>
@@ -187,62 +196,68 @@ export default function ReportPage() {
         </div>
       )}
 
-      {/* Error */}
       {error && (
-        <div className="flex items-start gap-3 bg-red-950/50 border border-red-800/50 rounded-xl p-4">
-          <svg className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div>
-            <p className="text-sm font-medium text-red-300">Report generation failed</p>
-            <p className="text-sm text-red-400 mt-0.5">{error}</p>
-          </div>
-        </div>
+        <Card className="border-destructive/40 bg-destructive/10">
+          <CardContent className="flex items-start gap-3 py-4">
+            <CircleAlert className="size-5 text-destructive flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-destructive">
+                Report generation failed
+              </p>
+              <p className="text-sm text-destructive/80 mt-0.5">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Loading / Generating */}
       {(loading || generating) && !report && (
-        <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-16 text-center">
-          <div className="relative w-16 h-16 mx-auto mb-6">
-            <div className="absolute inset-0 rounded-full border-4 border-zinc-800" />
-            <div className="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin" />
-            <div className="absolute inset-3 rounded-full bg-zinc-900 flex items-center justify-center">
-              <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+        <Card>
+          <CardContent className="text-center py-16">
+            <div className="relative size-16 mx-auto mb-6">
+              <div className="absolute inset-0 rounded-full border-4 border-muted" />
+              <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+              <div className="absolute inset-3 rounded-full bg-background flex items-center justify-center">
+                <FileText className="size-5 text-primary" />
+              </div>
             </div>
-          </div>
-          <p className="text-base font-semibold text-zinc-200 mb-1">Generating Research Report</p>
-          <p className="text-sm text-zinc-500 max-w-sm mx-auto">
-            Synthesizing findings from {totalAgents} agent outputs across all 6 stages...
-          </p>
-          <div className="flex justify-center gap-1 mt-6">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce"
-                style={{ animationDelay: `${i * 150}ms` }}
-              />
-            ))}
-          </div>
-        </div>
+            <p className="text-base font-semibold mb-1">
+              Generating Research Report
+            </p>
+            <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+              Synthesizing findings from {totalAgents} agent outputs across all 6
+              stages…
+            </p>
+            <div className="flex justify-center gap-1 mt-6">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="size-2 rounded-full bg-primary animate-bounce"
+                  style={{ animationDelay: `${i * 150}ms` }}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Report content */}
       {report && (
-        <div className="bg-zinc-900 rounded-2xl border border-zinc-800 overflow-hidden">
-          {/* Report inner header */}
-          <div className="px-6 lg:px-10 pt-8 pb-6 border-b border-zinc-800">
-            <div className="flex items-center gap-3 text-xs text-zinc-600">
-              <span className="font-medium text-zinc-500">Society of Researchers</span>
-              <span className="w-1 h-1 rounded-full bg-zinc-700" />
+        <Card className="overflow-hidden p-0">
+          <div className="px-6 lg:px-10 pt-8 pb-6 border-b">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="font-medium">Society of Researchers</span>
+              <span className="size-1 rounded-full bg-muted-foreground/40" />
               <span>Multi-Agent Research Report</span>
-              <span className="w-1 h-1 rounded-full bg-zinc-700" />
-              <span>{new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</span>
+              <span className="size-1 rounded-full bg-muted-foreground/40" />
+              <span>
+                {new Date().toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
             </div>
           </div>
 
-          {/* Report body */}
           <div className="px-6 lg:px-10 py-10">
             <div
               className="report-content"
@@ -250,9 +265,8 @@ export default function ReportPage() {
             />
           </div>
 
-          {/* Report footer */}
-          <div className="px-6 lg:px-10 py-5 border-t border-zinc-800 bg-zinc-950/50">
-            <div className="flex items-center justify-between text-xs text-zinc-600">
+          <div className="px-6 lg:px-10 py-5 border-t bg-muted/30">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>
                 Generated from {approvedStages} stages, {totalAgents} agent outputs,{" "}
                 {totalAgreements} agreements, {totalDisagreements} tensions
@@ -260,33 +274,29 @@ export default function ReportPage() {
               <button
                 onClick={generateReport}
                 disabled={generating}
-                className="inline-flex items-center gap-1.5 text-indigo-400 hover:text-indigo-300 font-medium transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 text-primary hover:opacity-80 font-medium transition-opacity disabled:opacity-50"
               >
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
+                <RefreshCw className="size-3.5" />
                 Regenerate report
               </button>
             </div>
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Report styles */}
       <style jsx global>{`
         .report-content {
           max-width: 72ch;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
         }
 
         .report-content h1 {
           font-size: 1.6rem;
           font-weight: 700;
-          color: #f4f4f5;
+          color: var(--foreground);
           margin-top: 3rem;
           margin-bottom: 1.25rem;
           padding-bottom: 0.75rem;
-          border-bottom: 1px solid #27272a;
+          border-bottom: 1px solid var(--border);
           line-height: 1.25;
           letter-spacing: -0.01em;
         }
@@ -297,11 +307,11 @@ export default function ReportPage() {
         .report-content h2 {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #e4e4e7;
+          color: var(--foreground);
           margin-top: 2.5rem;
           margin-bottom: 1rem;
           padding-bottom: 0.5rem;
-          border-bottom: 1px solid #18181b;
+          border-bottom: 1px solid color-mix(in oklab, var(--border) 60%, transparent);
           line-height: 1.3;
           letter-spacing: -0.005em;
         }
@@ -309,7 +319,7 @@ export default function ReportPage() {
         .report-content h3 {
           font-size: 1.05rem;
           font-weight: 600;
-          color: #d4d4d8;
+          color: var(--foreground);
           margin-top: 2rem;
           margin-bottom: 0.6rem;
           line-height: 1.4;
@@ -317,18 +327,18 @@ export default function ReportPage() {
 
         .report-content p {
           font-size: 0.925rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           line-height: 1.8;
           margin-bottom: 1.15rem;
         }
 
         .report-content strong {
-          color: #e4e4e7;
+          color: var(--foreground);
           font-weight: 600;
         }
 
         .report-content em {
-          color: #71717a;
+          color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
           font-style: italic;
         }
 
@@ -357,7 +367,7 @@ export default function ReportPage() {
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #6366f1;
+          background: var(--primary);
         }
 
         .report-content ol {
@@ -370,59 +380,59 @@ export default function ReportPage() {
         }
 
         .report-content ol > li::marker {
-          color: #818cf8;
+          color: var(--primary);
           font-weight: 600;
           font-size: 0.9rem;
         }
 
         .report-content li {
           font-size: 0.925rem;
-          color: #a1a1aa;
+          color: var(--muted-foreground);
           line-height: 1.75;
           margin-bottom: 0.5rem;
         }
 
         .report-content li strong {
-          color: #e4e4e7;
+          color: var(--foreground);
         }
 
         .report-content hr {
           border: none;
           height: 1px;
-          background: linear-gradient(to right, transparent, #3f3f46, transparent);
+          background: linear-gradient(to right, transparent, var(--border), transparent);
           margin: 2.5rem 0;
         }
 
         .report-content a {
-          color: #818cf8;
+          color: var(--primary);
           text-decoration: none;
           font-weight: 500;
-          border-bottom: 1px solid #4338ca;
+          border-bottom: 1px solid color-mix(in oklab, var(--primary) 40%, transparent);
           transition: border-color 0.15s;
         }
         .report-content a:hover {
-          border-bottom-color: #818cf8;
+          border-bottom-color: var(--primary);
         }
 
         .report-content blockquote {
-          border-left: 3px solid #6366f1;
-          background: #18181b;
+          border-left: 3px solid var(--primary);
+          background: var(--muted);
           padding: 0.75rem 1.25rem;
           margin: 1.25rem 0;
           border-radius: 0 0.5rem 0.5rem 0;
         }
         .report-content blockquote p {
-          color: #71717a;
+          color: var(--muted-foreground);
           font-style: italic;
           margin-bottom: 0;
         }
 
         .report-content code {
-          background: #18181b;
+          background: var(--muted);
           padding: 0.15em 0.4em;
           border-radius: 4px;
           font-size: 0.85em;
-          color: #a1a1aa;
+          color: var(--foreground);
           font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
         }
       `}</style>
@@ -430,9 +440,6 @@ export default function ReportPage() {
   );
 }
 
-/**
- * Markdown-to-HTML converter for research reports.
- */
 function markdownToHtml(md: string): string {
   const lines = md.split("\n");
   const html: string[] = [];

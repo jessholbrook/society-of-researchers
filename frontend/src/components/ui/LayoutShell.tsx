@@ -11,7 +11,7 @@ export function LayoutShell({ children }: { children: React.ReactNode }) {
   const handleToggle = useCallback(() => setSidebarOpen((prev) => !prev), []);
 
   return (
-    <div className="flex min-h-screen bg-[#0a0a0a]">
+    <div className="flex min-h-screen bg-background">
       <Sidebar isOpen={sidebarOpen} onClose={handleClose} />
       <main className="flex-1 lg:ml-60 min-h-screen">
         <MobileHeader onMenuToggle={handleToggle} />

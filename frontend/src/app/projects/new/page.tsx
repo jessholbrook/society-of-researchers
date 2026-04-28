@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -28,130 +34,108 @@ export default function NewProjectPage() {
         folder: folder.trim() || undefined,
       });
       router.push(`/projects/${project.id}`);
-    } catch (err: any) {
-      setError(err.message || "Failed to create project");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to create project";
+      setError(message);
       setSubmitting(false);
     }
   }
 
-  const inputClass = "w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-700 rounded-lg text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors";
+  const canSubmit = !submitting && name.trim() && researchQuestion.trim();
 
   return (
     <div className="p-6 lg:p-8 max-w-2xl mx-auto">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-zinc-500 mb-6">
-        <Link href="/" className="hover:text-indigo-400 transition-colors">
+      <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-6">
+        <Link
+          href="/"
+          className="hover:text-foreground transition-colors"
+        >
           Projects
         </Link>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-        <span className="text-zinc-200 font-medium">New Project</span>
+        <ChevronRight className="size-3.5" />
+        <span className="text-foreground font-medium">New Project</span>
       </nav>
 
-      <h1 className="text-2xl font-bold text-white mb-2">Create New Project</h1>
-      <p className="text-sm text-zinc-500 mb-8">
+      <h1 className="text-2xl font-semibold tracking-tight mb-1">
+        Create New Project
+      </h1>
+      <p className="text-sm text-muted-foreground mb-8">
         Define your research question and provide context for the agent pipeline.
       </p>
 
       {error && (
-        <div className="bg-red-950/50 border border-red-800/50 rounded-lg p-4 mb-6">
-          <p className="text-sm text-red-400">{error}</p>
-        </div>
+        <Card className="border-destructive/40 bg-destructive/10 mb-6">
+          <CardContent className="py-3 text-sm text-destructive">
+            {error}
+          </CardContent>
+        </Card>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Name */}
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-zinc-300 mb-1.5">
-            Project Name
-          </label>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="name">Project Name</Label>
+          <Input
             id="name"
-            type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Climate Impact on Urban Agriculture"
-            className={inputClass}
             required
           />
         </div>
 
-        {/* Research Question */}
-        <div>
-          <label
-            htmlFor="research_question"
-            className="block text-sm font-medium text-zinc-300 mb-1.5"
-          >
-            Research Question
-          </label>
-          <textarea
+        <div className="space-y-2">
+          <Label htmlFor="research_question">Research Question</Label>
+          <Textarea
             id="research_question"
             value={researchQuestion}
             onChange={(e) => setResearchQuestion(e.target.value)}
             placeholder="What specific question should the research agents investigate?"
             rows={4}
-            className={`${inputClass} resize-y`}
             required
           />
-          <p className="mt-1.5 text-xs text-zinc-600">
+          <p className="text-xs text-muted-foreground">
             Be specific. A focused question produces better research outputs.
           </p>
         </div>
 
-        {/* Folder */}
-        <div>
-          <label htmlFor="folder" className="block text-sm font-medium text-zinc-300 mb-1.5">
+        <div className="space-y-2">
+          <Label htmlFor="folder" className="flex items-baseline gap-1.5">
             Folder
-            <span className="font-normal text-zinc-600 ml-1">(optional)</span>
-          </label>
-          <input
+            <span className="font-normal text-muted-foreground text-xs">(optional)</span>
+          </Label>
+          <Input
             id="folder"
-            type="text"
             value={folder}
             onChange={(e) => setFolder(e.target.value)}
             placeholder="e.g., Climate Research, Economics"
-            className={inputClass}
           />
-          <p className="mt-1.5 text-xs text-zinc-600">
+          <p className="text-xs text-muted-foreground">
             Group this project in a sidebar folder.
           </p>
         </div>
 
-        {/* Context */}
-        <div>
-          <label htmlFor="context" className="block text-sm font-medium text-zinc-300 mb-1.5">
+        <div className="space-y-2">
+          <Label htmlFor="context" className="flex items-baseline gap-1.5">
             Additional Context
-            <span className="font-normal text-zinc-600 ml-1">(optional)</span>
-          </label>
-          <textarea
+            <span className="font-normal text-muted-foreground text-xs">(optional)</span>
+          </Label>
+          <Textarea
             id="context"
             value={context}
             onChange={(e) => setContext(e.target.value)}
             placeholder="Provide background information, constraints, specific domains to focus on, or any other relevant context..."
             rows={5}
-            className={`${inputClass} resize-y`}
           />
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={submitting || !name.trim() || !researchQuestion.trim()}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {submitting && (
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            )}
-            {submitting ? "Creating..." : "Create Project"}
-          </button>
-          <Link
-            href="/"
-            className="px-5 py-2.5 text-sm font-medium text-zinc-400 hover:text-zinc-200 transition-colors"
-          >
-            Cancel
-          </Link>
+          <Button type="submit" size="lg" disabled={!canSubmit}>
+            {submitting && <Loader2 className="animate-spin" />}
+            {submitting ? "Creating…" : "Create Project"}
+          </Button>
+          <Button asChild variant="ghost" size="lg">
+            <Link href="/">Cancel</Link>
+          </Button>
         </div>
       </form>
     </div>

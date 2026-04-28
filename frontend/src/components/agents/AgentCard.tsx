@@ -1,7 +1,12 @@
 "use client";
 
+import { Pencil, Trash2, Zap } from "lucide-react";
 import type { AgentConfig } from "@/lib/types";
 import { STAGE_NAMES } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface AgentCardProps {
   agent: AgentConfig;
@@ -10,100 +15,113 @@ interface AgentCardProps {
   onDelete: (id: string) => void;
 }
 
+function Toggle({
+  enabled,
+  onClick,
+  label,
+}: {
+  enabled: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      role="switch"
+      aria-checked={enabled}
+      aria-label={label}
+      className={cn(
+        "relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0",
+        enabled ? "bg-primary" : "bg-muted"
+      )}
+    >
+      <span
+        className={cn(
+          "inline-block size-3.5 rounded-full bg-white shadow transition-transform",
+          enabled ? "translate-x-4.5" : "translate-x-0.5"
+        )}
+      />
+    </button>
+  );
+}
+
 export function AgentCard({ agent, onToggle, onEdit, onDelete }: AgentCardProps) {
   return (
-    <div
-      className={`bg-zinc-950 rounded-xl border p-4 transition-all ${
-        agent.enabled ? "border-zinc-800" : "border-zinc-800 opacity-60"
-      }`}
-    >
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <h3 className="text-sm font-semibold text-zinc-200 truncate">
-              {agent.name}
-            </h3>
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-950/50 text-indigo-400 border border-indigo-800/40 flex-shrink-0">
-              Stage {agent.stage}: {STAGE_NAMES[agent.stage] || "Unknown"}
-            </span>
+    <Card className={cn("transition-opacity", !agent.enabled && "opacity-60")}>
+      <CardContent className="space-y-3 py-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+              <h3 className="text-sm font-semibold truncate">{agent.name}</h3>
+              <Badge variant="secondary" className="text-[10px]">
+                Stage {agent.stage}: {STAGE_NAMES[agent.stage] || "Unknown"}
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground truncate">{agent.role}</p>
           </div>
-          <p className="text-xs text-zinc-500 truncate">{agent.role}</p>
-        </div>
-
-        {/* Toggle */}
-        <button
-          onClick={() => onToggle(agent.id)}
-          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ml-3 ${
-            agent.enabled ? "bg-indigo-600" : "bg-zinc-700"
-          }`}
-          aria-label={agent.enabled ? "Disable agent" : "Enable agent"}
-        >
-          <span
-            className={`inline-block h-3.5 w-3.5 rounded-full bg-white transition-transform shadow-sm ${
-              agent.enabled ? "translate-x-4.5" : "translate-x-0.5"
-            }`}
+          <Toggle
+            enabled={agent.enabled}
+            onClick={() => onToggle(agent.id)}
+            label={agent.enabled ? "Disable agent" : "Enable agent"}
           />
-        </button>
-      </div>
-
-      {/* Perspective */}
-      {agent.perspective && (
-        <p className="text-xs text-zinc-600 mb-3 line-clamp-2 italic">
-          &quot;{agent.perspective}&quot;
-        </p>
-      )}
-
-      {/* Meta row */}
-      <div className="flex items-center gap-3 mb-3">
-        <span className="text-[10px] text-zinc-600 flex items-center gap-1">
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          Temp: {agent.temperature.toFixed(1)}
-        </span>
-        <span className="text-[10px] text-zinc-600">{agent.model}</span>
-      </div>
-
-      {/* Conflict partners */}
-      {agent.conflict_partners.length > 0 && (
-        <div className="mb-3">
-          <p className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider mb-1">
-            Conflict Partners
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {agent.conflict_partners.map((partner) => (
-              <span
-                key={partner}
-                className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-red-950/50 text-red-400 border border-red-800/40"
-              >
-                {partner}
-              </span>
-            ))}
-          </div>
         </div>
-      )}
 
-      {/* Actions */}
-      <div className="flex items-center gap-2 pt-2 border-t border-zinc-800">
-        <button
-          onClick={() => onEdit(agent)}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-zinc-500 hover:text-indigo-400 hover:bg-indigo-950/30 rounded-md transition-colors"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          Edit
-        </button>
-        <button
-          onClick={() => onDelete(agent.id)}
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-zinc-500 hover:text-red-400 hover:bg-red-950/30 rounded-md transition-colors"
-        >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-          Delete
-        </button>
-      </div>
-    </div>
+        {agent.perspective && (
+          <p className="text-xs text-muted-foreground line-clamp-2 italic">
+            &quot;{agent.perspective}&quot;
+          </p>
+        )}
+
+        <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+          <span className="flex items-center gap-1">
+            <Zap className="size-3" />
+            Temp: {agent.temperature.toFixed(1)}
+          </span>
+          <span>{agent.model}</span>
+        </div>
+
+        {agent.conflict_partners.length > 0 && (
+          <div>
+            <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1">
+              Conflict Partners
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {agent.conflict_partners.map((partner) => (
+                <Badge
+                  key={partner}
+                  variant="outline"
+                  className="bg-destructive/10 text-destructive border-destructive/30 text-[10px]"
+                >
+                  {partner}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex items-center gap-1 pt-2 border-t">
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={() => onEdit(agent)}
+          >
+            <Pencil />
+            Edit
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={() => onDelete(agent.id)}
+            className="text-muted-foreground hover:text-destructive"
+          >
+            <Trash2 />
+            Delete
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
