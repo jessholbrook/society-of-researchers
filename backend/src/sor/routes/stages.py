@@ -92,7 +92,10 @@ async def run_stage(project_id: str, stage_number: int):
                 }),
             }
 
-    return EventSourceResponse(event_generator())
+    # ping=10 sends a comment ":" every 10s during long-silent steps
+    # (e.g. the ~70s conflict-detection LLM call) to keep the connection
+    # warm against intermediate idle-timeouts.
+    return EventSourceResponse(event_generator(), ping=10)
 
 
 @router.post("/{stage_number}/approve", response_model=dict)

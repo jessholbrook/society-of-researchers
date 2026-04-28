@@ -52,6 +52,7 @@ export function runStageSSE(
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
+    let stageCompleted = false;
 
     try {
       while (true) {
@@ -103,10 +104,21 @@ export function runStageSSE(
               callbacks.onConflictComplete?.(parsed);
               break;
             case "stage_complete":
+              stageCompleted = true;
               callbacks.onStageComplete?.(parsed);
               return;
           }
         }
+      }
+
+      // Stream ended cleanly but the server never sent stage_complete —
+      // surface this as an error so the UI doesn't sit stuck in "running".
+      if (!stageCompleted) {
+        callbacks.onError?.(
+          new Error(
+            "Connection closed before the stage finished. The stage may still be running on the server — refresh in a minute."
+          )
+        );
       }
     } catch (err: any) {
       if (err.name === "AbortError") return;
