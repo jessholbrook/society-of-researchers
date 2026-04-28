@@ -8,7 +8,7 @@ A multi-agent research orchestration system that runs research through 6 stages,
 
 ## What it is
 
-Most "AI research" tools collapse multiple model runs into a single answer. This one keeps the disagreement visible. For every stage of a research project, 4–8 agents analyze the same question from incompatible angles, a separate pass extracts their agreements and tensions, and the human picks what to ship. The result is a piece of work where the reasoning is auditable and the human stays in control of the synthesis.
+Most AI research tools collapse multiple model runs into a single answer. This one keeps the disagreement visible. For every stage of a research project, 4–8 agents analyze the same question from incompatible angles, a separate pass extracts their agreements and tensions, and the human picks what to ship. The result is a piece of work where the reasoning is auditable and the human stays in control of the synthesis.
 
 The whole pipeline takes ~2–4 minutes per stage on demo settings (Haiku 4.5, capped output) and ~5–10 minutes per stage on quality settings (Sonnet 4.6, full context).
 
@@ -55,7 +55,7 @@ Each stage card shows status, description, and live progress. The pipeline strip
 
 ![Project overview](docs/screenshots/02-project-overview.png)
 
-When you click **Run Stage**, agents start in waves (capped at 2 concurrent on the demo tier to stay under Anthropic's connection limit) and stream their outputs back as they complete. The page survives full-stage durations of several minutes — if the SSE connection blips mid-flight, the frontend automatically polls the persisted result and replays any missed events instead of showing a generic error.
+When you click **Run Stage**, agents start in waves (capped at 2 concurrent on the demo tier to stay under Anthropic's connection limit) and stream their outputs back as they complete.
 
 ![Stage detail](docs/screenshots/03-stage-detail.png)
 
