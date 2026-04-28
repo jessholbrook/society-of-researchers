@@ -94,16 +94,19 @@ class StageOrchestrator:
                 data={"stage": stage_number},
             )
 
-        # --- Run agents with staggered starts to avoid rate limits ---
-        async def _staggered_run(agent: AgentConfig, delay: float) -> AgentOutput:
-            if delay > 0:
-                await asyncio.sleep(delay)
-            return await self._run_single_agent(agent, user_message, project.id)
+        # --- Run agents with a hard concurrency cap ---
+        # Anthropic's tiered rate limit on "concurrent connections" is the
+        # real ceiling. A static stagger isn't enough because each agent
+        # call lasts 30-60s, so without a cap N agents pile up regardless
+        # of how staggered their starts were. Use a semaphore so we never
+        # exceed agent_max_concurrency in-flight requests at once.
+        sem = asyncio.Semaphore(settings.agent_max_concurrency)
 
-        tasks = [
-            _staggered_run(agent, i * 5.0)  # 5 second stagger between agents
-            for i, agent in enumerate(enabled_agents)
-        ]
+        async def _bounded_run(agent: AgentConfig) -> AgentOutput:
+            async with sem:
+                return await self._run_single_agent(agent, user_message, project.id)
+
+        tasks = [_bounded_run(agent) for agent in enabled_agents]
         agent_outputs: list[AgentOutput] = await asyncio.gather(*tasks)
 
         # --- Yield AGENT_COMPLETE / AGENT_ERROR for each ---

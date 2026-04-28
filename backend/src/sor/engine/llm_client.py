@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import random
 import re
 
 import httpx
@@ -72,7 +73,17 @@ class LLMClient:
                 status = exc.response.status_code
                 # Retry on rate limit (429) and overloaded (529)
                 if status in (429, 529) and attempt < MAX_RETRIES - 1:
-                    wait = INITIAL_BACKOFF * (2 ** attempt)
+                    # Honor the server's retry-after when present (Anthropic
+                    # sets it on rate-limit responses); otherwise fall back to
+                    # jittered exponential backoff.
+                    retry_after_hdr = exc.response.headers.get("retry-after")
+                    if retry_after_hdr:
+                        try:
+                            wait = float(retry_after_hdr) + random.uniform(0, 1.0)
+                        except ValueError:
+                            wait = INITIAL_BACKOFF * (2 ** attempt) + random.uniform(0, INITIAL_BACKOFF)
+                    else:
+                        wait = INITIAL_BACKOFF * (2 ** attempt) + random.uniform(0, INITIAL_BACKOFF)
                     await asyncio.sleep(wait)
                     continue
                 body = exc.response.text
@@ -82,7 +93,8 @@ class LLMClient:
             except httpx.RequestError as exc:
                 last_error = exc
                 if attempt < MAX_RETRIES - 1:
-                    await asyncio.sleep(INITIAL_BACKOFF * (2 ** attempt))
+                    wait = INITIAL_BACKOFF * (2 ** attempt) + random.uniform(0, INITIAL_BACKOFF)
+                    await asyncio.sleep(wait)
                     continue
                 raise LLMError(f"Network error calling Anthropic API: {exc}") from exc
 
