@@ -204,7 +204,7 @@ export default function AgentsPage() {
                     system_prompt: "",
                     stage: addingToStage,
                     temperature: 0.7,
-                    model: "gpt-4",
+                    model: "claude-sonnet-4-6",
                     conflict_partners: [],
                     enabled: true,
                     project_id: projectId,
