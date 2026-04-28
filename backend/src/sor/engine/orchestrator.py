@@ -20,6 +20,7 @@ from ..models import (
     StageResult,
     StageStatus,
 )
+from ..config import settings
 from ..store.database import Database
 from .conflict_detector import detect_conflicts
 from .llm_client import LLMClient, LLMError
@@ -203,7 +204,8 @@ class StageOrchestrator:
                 system_prompt=agent.system_prompt,
                 user_message=user_message,
                 temperature=agent.temperature,
-                model=agent.model,
+                model=settings.agent_model or agent.model,
+                max_tokens=settings.agent_max_tokens,
             )
             return AgentOutput(
                 agent_id=agent.id,
